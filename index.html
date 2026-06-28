@@ -48,7 +48,7 @@ nav a:hover::after{width:100%}
 .gallery-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232c3e7a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
 .gallery-section .section-title{color:var(--primary)}
 .single-gallery{display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.5vw,24px);max-width:clamp(400px,50vw,800px);margin:0 auto;position:relative;z-index:1}
-.gallery-viewport{flex:1;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12);position:relative;aspect-ratio:4/3;background:#f0ebe3}
+.gallery-viewport{flex:1;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12);position:relative;aspect-ratio:4/3;background:#e8ddd0}
 .gallery-viewport img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease}
 .gallery-viewport img.fade-in{opacity:1;transform:scale(1)}
 .gallery-viewport img.fade-out{opacity:0;transform:scale(0.95)}
@@ -153,7 +153,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <div class="single-gallery" id="singleGallery">
   <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
   <div class="gallery-viewport" id="galleryViewport">
-    <img id="gallerySingleImg" src="" alt="毕业照片">
+    <img id="gallerySingleImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease">
   </div>
   <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
 </div>
@@ -167,7 +167,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <div class="single-gallery" id="singleGallery">
   <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
   <div class="gallery-viewport" id="galleryViewport">
-    <img id="gallerySingleImg" src="" alt="毕业照片">
+    <img id="gallerySingleImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease">
   </div>
   <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
 </div>
@@ -253,228 +253,95 @@ c.appendChild(e)}
 })();
 
 // ===== 照片墙配置 =====
-var galleryConfig = {
-  // ★★★ 请将你的毕业照片放入 photos 文件夹 ★★★
-  // 支持 jpg/jpeg/png/webp 格式
-  // 然后在这里添加文件名和描述（可选）
-  images: [
-    { file: 'photo01.jpg' },
-    { file: 'photo02.jpg' },
-    { file: 'photo03.jpg' },
-    { file: 'photo04.jpg' },
-    { file: 'photo05.jpg' },
-    { file: 'photo06.jpg' },
-    { file: 'photo07.jpg' },
-    { file: 'photo08.jpg' },
-    { file: 'photo09.jpg' },
-    { file: 'photo10.jpg' },
-    { file: 'photo11.jpg' },
-    { file: 'photo12.jpg' },
-    { file: 'photo13.jpg' },
-    { file: 'photo14.jpg' },
-    { file: 'photo15.jpg' }
-  ],
-  'basePath': 'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/',   // 照片存放文件夹
-  interval: 3000,         // 自动轮播间隔（毫秒）
-  shuffleOnLoad: true     // 加载时是否随机打乱顺序
-};
+
 
 // ===== 照片墙初始化 =====
-
 (function(){
-var images = galleryConfig.images;
-var viewport = document.getElementById('galleryViewport');
+var images = [
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo01.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo02.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo03.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo04.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo05.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo06.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo07.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo08.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo09.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo10.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo11.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo12.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo13.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo14.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo15.jpg'
+];
+var idx = 0, dir = 1, timer = null;
 var imgEl = document.getElementById('gallerySingleImg');
 var indicator = document.getElementById('carouselIndicator');
-var prevBtn = document.getElementById('galleryPrev');
-var nextBtn = document.getElementById('galleryNext');
-var modal = document.getElementById('galleryModal');
-var modalImg = document.getElementById('modalImage');
-var modalClose = document.getElementById('modalClose');
-var modalPrev = document.getElementById('modalPrev');
-var modalNext = document.getElementById('modalNext');
-var modalCounter = document.getElementById('modalCounter');
-var basePath = galleryConfig.basePath;
-var currentIndex = 0;
-var direction = 1; // 1=向右, -1=向左
-var autoTimer = null;
-var isTransitioning = false;
 
-// 加载时随机打乱
-if (galleryConfig.shuffleOnLoad) {
-  for (var i = images.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = images[i];
-    images[i] = images[j];
-    images[j] = temp;
+function initDots(){
+  indicator.innerHTML = '';
+  for(var i=0;i<images.length;i++){
+    var dot = document.createElement('span');
+    dot.className = 'carousel-dot' + (i===0?' active':'');
+    dot.onclick = (function(j){return function(){goTo(j);}})(i);
+    indicator.appendChild(dot);
   }
 }
 
-// 显示指定照片（带淡入淡出效果）
-function showImage(idx, immediate){
-  if (isTransitioning && !immediate) return;
-  if (idx < 0 || idx >= images.length) return;
-  currentIndex = idx;
-  
-  if (immediate) {
-    imgEl.src = basePath + images[idx].file;
-    imgEl.style.opacity = '1';
-    imgEl.style.transform = 'scale(1)';
-  } else {
-    isTransitioning = true;
-    // 淡出
-    imgEl.style.opacity = '0';
-    imgEl.style.transform = 'scale(0.95)';
-    setTimeout(function(){
-      imgEl.src = basePath + images[idx].file;
-      // 淡入
-      setTimeout(function(){
-        imgEl.style.opacity = '1';
-        imgEl.style.transform = 'scale(1)';
-        isTransitioning = false;
-      }, 50);
-    }, 300);
-  }
-  // 更新指示点
-  updateDots(idx);
+function showPhoto(i){
+  imgEl.style.opacity = '0';
+  imgEl.style.transform = 'scale(0.95)';
+  setTimeout(function(){
+    imgEl.src = images[i];
+    imgEl.onload = function(){
+      imgEl.style.opacity = '1';
+      imgEl.style.transform = 'scale(1)';
+    };
+    // 更新指示点
+    var dots = indicator.querySelectorAll('.carousel-dot');
+    for(var d=0;d<dots.length;d++) dots[d].className = 'carousel-dot' + (d===i?' active':'');
+    idx = i;
+  }, 200);
 }
 
-// 更新指示点
-function updateDots(idx){
-  var dots = indicator.querySelectorAll('.carousel-dot');
-  if (dots.length) {
-    dots.forEach(function(d, i){
-      d.classList.toggle('active', i === idx);
-    });
-  }
+function goTo(i){
+  if(timer) clearInterval(timer);
+  showPhoto(i);
+  idx = i;
+  startTimer();
 }
 
-// 生成指示点
-images.forEach(function(_, idx){
-  var dot = document.createElement('div');
-  dot.className = 'carousel-dot';
-  if (idx === 0) dot.classList.add('active');
-  dot.addEventListener('click', function(){
-    stopAuto();
-    showImage(idx);
-    startAuto();
-  });
-  indicator.appendChild(dot);
-});
-
-// 下一张（向右）
-function nextImage(){
-  if (isTransitioning) return;
-  var next = (currentIndex + 1) % images.length;
-  showImage(next);
+function startTimer(){
+  if(timer) clearInterval(timer);
+  timer = setInterval(function(){
+    var next = idx + dir;
+    if(next >= images.length){ dir = -1; next = images.length - 2; }
+    if(next < 0){ dir = 1; next = 1; }
+    showPhoto(next);
+  }, 3000);
 }
 
-// 上一张（向左）
-function prevImage(){
-  if (isTransitioning) return;
-  var prev = (currentIndex - 1 + images.length) % images.length;
-  showImage(prev);
-}
+// 按钮绑定
+document.getElementById('galleryPrev').onclick = function(){
+  if(timer) clearInterval(timer);
+  var prev = idx - 1;
+  if(prev < 0) prev = images.length - 1;
+  showPhoto(prev);
+  startTimer();
+};
+document.getElementById('galleryNext').onclick = function(){
+  if(timer) clearInterval(timer);
+  var next = idx + 1;
+  if(next >= images.length) next = 0;
+  showPhoto(next);
+  startTimer();
+};
 
-// 左右来回循环播放
-function autoPlay(){
-  var next = currentIndex + direction;
-  if (next >= images.length) {
-    direction = -1;
-    next = images.length - 2;
-  } else if (next < 0) {
-    direction = 1;
-    next = 1;
-  }
-  showImage(next);
-}
-
-// 启动/停止自动播放
-function startAuto(){
-  stopAuto();
-  if (images.length <= 1) return;
-  autoTimer = setInterval(autoPlay, galleryConfig.interval);
-}
-
-function stopAuto(){
-  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
-}
-
-// 左右按钮点击
-prevBtn.addEventListener('click', function(){
-  stopAuto();
-  prevImage();
-  startAuto();
-});
-nextBtn.addEventListener('click', function(){
-  stopAuto();
-  nextImage();
-  startAuto();
-});
-
-// 点击照片打开大图预览
-imgEl.addEventListener('click', function(){
-  stopAuto();
-  modalImg.src = basePath + images[currentIndex].file;
-  modalImg.alt = images[currentIndex].name || '毕业照片';
-  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-});
-
-// 大图弹窗控制
-modalClose.addEventListener('click', function(){
-  modal.classList.remove('active');
-  document.body.style.overflow = '';
-  startAuto();
-});
-modalPrev.addEventListener('click', function(){
-  currentIndex = (currentIndex - 1 + images.length) % images.length;
-  modalImg.src = basePath + images[currentIndex].file;
-  modalImg.alt = images[currentIndex].name || '毕业照片';
-  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-});
-modalNext.addEventListener('click', function(){
-  currentIndex = (currentIndex + 1) % images.length;
-  modalImg.src = basePath + images[currentIndex].file;
-  modalImg.alt = images[currentIndex].name || '毕业照片';
-  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-});
-
-document.addEventListener('keydown', function(e){
-  if (!modal.classList.contains('active')) return;
-  if (e.key === 'Escape') { modal.classList.remove('active'); document.body.style.overflow = ''; startAuto(); }
-  if (e.key === 'ArrowLeft') { currentIndex = (currentIndex - 1 + images.length) % images.length; modalImg.src = basePath + images[currentIndex].file; modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length; }
-  if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % images.length; modalImg.src = basePath + images[currentIndex].file; modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length; }
-});
-
-modal.addEventListener('click', function(e){
-  if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; startAuto(); }
-});
-
-// 触摸滑动
-var touchStartX = 0;
-modal.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
-modal.addEventListener('touchend', function(e){
-  var diff = e.changedTouches[0].screenX - touchStartX;
-  if (Math.abs(diff) > 50) {
-    if (diff > 0) { currentIndex = (currentIndex - 1 + images.length) % images.length; }
-    else { currentIndex = (currentIndex + 1) % images.length; }
-    modalImg.src = basePath + images[currentIndex].file;
-    modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  }
-});
-
-// 显示第一张
-showImage(0, true);
-
-// 开始自动左右来回循环
-startAuto();
-console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，左右来回循环播放');
-})();
-
-
-// ===== Windows 检测 =====// ===== Windows 检测 =====
+// 初始化
+initDots();
+showPhoto(0);
+startTimer();
+})();// ===== Windows 检测 =====// ===== Windows 检测 =====
 var isWindows = navigator.platform.indexOf('Win') > -1 ||
 navigator.userAgent.indexOf('Windows') > -1;
 
