@@ -317,24 +317,13 @@ function postMessage(){
   setTimeout(function(){ saveToGitHub(newMsg); }, 500);
 }
 function saveToGitHub(newMsg){
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json", true);
-  xhr.setRequestHeader("Authorization", "token " + G_TOKEN);
-  xhr.setRequestHeader("Accept", "application/vnd.github.v3+json");
-  xhr.onload = function(){
-    if (xhr.status === 200) {
-      try {
-        var resp = JSON.parse(xhr.responseText);
-        var sha = resp.sha;
-        var existing = {messages: MSG_CACHE, count: MSG_CACHE.length};
-        try { existing = JSON.parse(decodeURIComponent(escape(atob(resp.content)))); existing.messages = MSG_CACHE; existing.count = MSG_CACHE.length; } catch(e){}
-        var utf8 = unescape(encodeURIComponent(JSON.stringify(existing)));
-        var b64 = btoa(utf8);
-        var putXhr = new XMLHttpRequest();
-        putXhr.open("PUT", "https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json", true);
-        putXhr.setRequestHeader("Authorization", "token " + G_TOKEN);
-        putXhr.setRequestHeader("Content-Type", "application/json");
-        putXhr.onload = function(){ console.log("留言已同步到云端"); };
+  fetch("https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json",{headers:{"Authorization":"token "+G_TOKEN,"Accept":"application/vnd.github.v3+json"}}).then(r=>r.json()).then(resp=>{
+    var sha=resp.sha,existing={messages:MSG_CACHE,count:MSG_CACHE.length};
+    try{existing=JSON.parse(decodeURIComponent(escape(atob(resp.content))));existing.messages=MSG_CACHE;existing.count=MSG_CACHE.length}catch(e){}
+    var utf8=unescape(encodeURIComponent(JSON.stringify(existing))),b64=btoa(utf8);
+    fetch("https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json",{method:"PUT",headers:{"Authorization":"token "+G_TOKEN,"Content-Type":"application/json"},body:JSON.stringify({message:"新留言",content:b64,sha:sha,branch:"main"})}).then(()=>console.log("云端同步成功")).catch(()=>console.log("云端同步失败(跨域限制),留言保存在本地"));
+  }).catch(()=>console.log("读取留言数据失败,留言保存在本地"));
+};
         putXhr.onerror = function(){ console.log("云端同步失败(跨域),留言已保存在本地"); };
         putXhr.send(JSON.stringify({message: "新留言", content: b64, sha: sha, branch: "main"}));
       } catch(e){ console.log("解析留言数据失败"+e); }
@@ -701,9 +690,6 @@ loadMessages();
   }
 }
 
-
-
-</body>
 
 
 </body>
