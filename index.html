@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎓 均州中学 · 九年级1班 · 毕业典礼</title>
+<title>🎓 均州中学 · 九年级1班 · 毕业典礼（CDN加速）</title>
 <style>
 .music-btn{position:fixed;bottom:3vh;right:3vw;z-index:999;width:clamp(48px,5vw,70px);height:clamp(48px,5vw,70px);border-radius:50%;background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;border:none;font-size:clamp(1.2rem,2.5vw,1.8rem);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.25);transition:all 0.3s;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .music-btn:hover{transform:scale(1.1)}
@@ -27,7 +27,7 @@ nav a{text-decoration:none;color:#444;font-weight:500;font-size:clamp(0.85rem,1.
 nav a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:3px;background:var(--accent);transition:width 0.3s}
 nav a:hover{color:var(--primary)}
 nav a:hover::after{width:100%}
-.hero{min-height:100vh;background:url('654.png') center center / cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15vh 4vw 10vh;position:relative;overflow:hidden}
+.hero{min-height:100vh;background:url('https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/654.png') center center / cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15vh 4vw 10vh;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,42,108,0.55),rgba(44,62,122,0.35));z-index:1}
 .confetti-container{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
 .confetti{position:absolute;width:clamp(8px,1.2vw,18px);height:clamp(8px,1.2vw,18px);opacity:0.7;animation:fall linear infinite;border-radius:3px}
@@ -176,9 +176,9 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <p class="section-desc">重温那些一起走过的日子</p>
 
 <div class="video-wrapper">
-<video id="gradVideo" controls preload="metadata" playsinline poster="654.png">
-<source src="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/graduation_video.mp4" type="video/mp4">
-您的浏览器不支持视频播放<br><a href="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/graduation_video.mp4" style="color:#f0c040" download>📥 点此下载视频播放</a>
+<video id="gradVideo" controls preload="metadata" playsinline poster="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/654.png">
+<source src="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" type="video/mp4">
+您的浏览器不支持视频播放<br><a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" style="color:#f0c040" download>📥 点此下载视频播放</a>
 </video>
 </div>
 
@@ -187,8 +187,8 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 
 <!-- Windows 专属操作按钮 -->
 <div class="video-actions">
-<a href="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/graduation_video.mp4" download class="btn-download">📥 下载毕业视频</a>
-<a href="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/graduation_video.mp4" target="_blank" class="btn-player">▶ 在线播放视频</a>
+<a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" download class="btn-download">📥 下载毕业视频（推荐用迅雷）📥 下载毕业视频</a>
+<a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" target="_blank" class="btn-player">▶ 在线播放视频（CDN加速）▶ 在线播放视频</a>
 
 </div>
 
@@ -208,7 +208,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </section>
 
 <!-- ===== 背景音乐 ===== -->
-<audio id="bgMusic" src="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/background_music.mp3" loop preload="metadata"></audio>
+<audio id="bgMusic" src="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/background_music.mp3" loop preload="metadata"></audio>
 <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
 <div class="music-label" id="musicLabel">🎵 起风了 — 周深</div>
 
@@ -258,7 +258,7 @@ var galleryConfig = {
     { file: 'photo14.jpg' },
     { file: 'photo15.jpg' }
   ],
-  basePath: 'photos/',   // 照片存放文件夹
+  basePath: 'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/',   // 照片存放文件夹
   interval: 3000,         // 自动轮播间隔（毫秒）
   shuffleOnLoad: true     // 加载时是否随机打乱顺序
 };
