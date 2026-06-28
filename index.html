@@ -200,7 +200,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <p class="section-desc">写下你想说的话，送给老师、同学，或未来的自己。</p>
 <div class="message-area">
 <input id="msgAuthor" type="text" placeholder="你的名字…" style="width:100%;border:2px solid #e0ddd8;border-radius:12px;padding:12px 16px;font-size:1rem;font-family:inherit;margin-bottom:12px;transition:border 0.3s;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e0ddd8'">
-<textarea id="msgInput" placeholder="写一句毕业祝福吧…  (数据保存在本地)"></textarea>
+<textarea id="msgInput" placeholder="写一句毕业祝福吧…"></textarea>
 <button onclick="postMessage()">📨 发布留言</button>
 <div class="message-list" id="msgList"></div>
 </div>
@@ -218,6 +218,69 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </footer>
 
 <script>
+
+// ===== 照片墙初始化 =====
+(function(){
+var images = [
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo01.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo02.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo03.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo04.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo05.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo06.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo07.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo08.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo09.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo10.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo11.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo12.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo13.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo14.jpg',
+  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo15.jpg'
+];
+var idx = 0, dir = 1, timer = null;
+var imgEl = document.getElementById('gallerySingleImg');
+var indicator = document.getElementById('carouselIndicator');
+function initDots(){
+  indicator.innerHTML = '';
+  for(var i=0;i<images.length;i++){
+    var dot = document.createElement('span');
+    dot.className = 'carousel-dot' + (i===0?' active':'');
+    dot.onclick = (function(j){return function(){goTo(j);}})(i);
+    indicator.appendChild(dot);
+  }
+}
+function showPhoto(i){
+  imgEl.style.opacity = '0'; imgEl.style.transform = 'scale(0.95)';
+  setTimeout(function(){
+    imgEl.src = images[i];
+    imgEl.onload = function(){ imgEl.style.opacity = '1'; imgEl.style.transform = 'scale(1)'; };
+    var dots = indicator.querySelectorAll('.carousel-dot');
+    for(var d=0;d<dots.length;d++) dots[d].className = 'carousel-dot' + (d===i?' active':'');
+    idx = i;
+  }, 200);
+}
+function goTo(i){ if(timer) clearInterval(timer); showPhoto(i); idx = i; startTimer(); }
+function startTimer(){
+  if(timer) clearInterval(timer);
+  timer = setInterval(function(){
+    var next = idx + dir;
+    if(next >= images.length){ dir = -1; next = images.length - 2; }
+    if(next < 0){ dir = 1; next = 1; }
+    showPhoto(next);
+  }, 3000);
+}
+document.getElementById('galleryPrev').onclick = function(){
+  if(timer) clearInterval(timer); var prev = idx - 1; if(prev < 0) prev = images.length - 1;
+  showPhoto(prev); startTimer();
+};
+document.getElementById('galleryNext').onclick = function(){
+  if(timer) clearInterval(timer); var next = idx + 1; if(next >= images.length) next = 0;
+  showPhoto(next); startTimer();
+};
+initDots(); showPhoto(0); startTimer();
+})();
+
 // ===== 留言功能（云端+本地双存储） =====
 var MSG_CACHE = [];
 
