@@ -195,7 +195,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </section>
 
 <!-- ===== 背景音乐 ===== -->
-<audio id="bgMusic" src="background_music.mp3" loop preload="metadata"></audio>
+<audio id="bgMusic" src="https://github.com/xingheyony-oss/graduation-ceremony/releases/download/v1.0/background_music.mp3" loop preload="metadata"></audio>
 <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
 <div class="music-label" id="musicLabel">🎵 起风了 — 周深</div>
 
@@ -472,24 +472,38 @@ alert('请手动在文件管理器中找到毕业典礼文件夹');
 
 // ===== 背景音乐 =====
 var audio=document.getElementById('bgMusic'),btn=document.getElementById('musicBtn'),label=document.getElementById('musicLabel'),isPlaying=false;
+function playMusic(){
+audio.play().then(function(){
+btn.classList.add('playing');
+btn.innerHTML='🔊';
+label.classList.add('show');
+setTimeout(function(){label.classList.remove('show')},3000);
+isPlaying=true;
+}).catch(function(){
+// 如果播放失败，等用户下次点击
+console.log('等待用户交互后播放');
+});
+}
+
 function toggleMusic(){
 if(isPlaying){
 audio.pause();
 btn.classList.remove('playing');
 btn.innerHTML='🎵';
 label.classList.remove('show');
+isPlaying=false;
 } else {
-audio.play().then(function(){
-btn.classList.add('playing');
-btn.innerHTML='🔊';
-label.classList.add('show');
-setTimeout(function(){label.classList.remove('show')},3000);
-}).catch(function(){
-alert('⚠️ 无法自动播放，请点击播放按钮');
-});
+playMusic();
 }
-isPlaying=!isPlaying;
 }
+
+// 用户首次点击页面任意位置时尝试播放音乐
+document.addEventListener('click', function(){
+if(!isPlaying && !window._musicAttempted){
+window._musicAttempted=true;
+playMusic();
+}
+}, {once:true});
 audio.addEventListener('ended',function(){
 isPlaying=false;
 btn.classList.remove('playing');
