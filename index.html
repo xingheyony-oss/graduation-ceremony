@@ -145,20 +145,6 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <button class="btn-scroll" onclick="document.getElementById('message').scrollIntoView({behavior:'smooth'})">🎓 开启纪念之旅</button>
 </div>
 </section>
-
-<!-- ===== 照片墙（单张循环播放 - CDN加速） ===== -->
-<section class="gallery-section" id="gallery">
-<h2 class="section-title">📸 青春纪念册</h2>
-<p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
-<div class="single-gallery" id="singleGallery">
-  <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
-  <div class="gallery-viewport" id="galleryViewport">
-    <img id="gallerySingleImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease">
-  </div>
-  <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
-</div>
-<div class="carousel-indicator" id="carouselIndicator"></div>
-</section>
 <section class="gallery-section" id="gallery">
 <h2 class="section-title">📸 青春纪念册</h2>
 <p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
@@ -167,7 +153,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <div class="single-gallery" id="singleGallery">
   <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
   <div class="gallery-viewport" id="galleryViewport">
-    <img id="gallerySingleImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease">
+    <img id="gallerySingleImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
   </div>
   <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
 </div>
@@ -197,15 +183,13 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
   <!-- 审核中占位提示 -->
   <div id="videoPending" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(26,42,108,0.9),rgba(44,62,122,0.7));border-radius:var(--radius);z-index:10;pointer-events:none">
     <div style="font-size:clamp(3rem,8vw,6rem);margin-bottom:clamp(10px,2vh,20px)">⏳</div>
-    <div style="color:#fff;font-size:clamp(1rem,2vw,1.6rem);font-weight:600;margin-bottom:8px">毕业视频正在B站审核中...</div>
-    <div style="color:rgba(255,255,255,0.7);font-size:clamp(0.85rem,1.3vw,1rem)">审核通过后点击下方按钮设置即可播放 🎬</div>
-  </div>
-</div>
-
-<div class="video-actions" style="margin-top:clamp(16px,2.5vh,30px);display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center">
-  <div style="display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center;align-items:center">
-  <a href="#video" class="nav-link" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'});setTimeout(function(){var el=document.getElementById('bilibiliVideo');if(el)el.scrollIntoView({behavior:'smooth'})},500)">🎬 毕业纪念视频（已设置）</a>
-</div>
+    <div class="bilibili-video-wrapper">
+        <iframe src="//player.bilibili.com/player.html?isOutside=true&bvid=BV1pxTG6bEBm&p=1&autoplay=0" 
+                scrolling="no" border="0" frameborder="no" framespacing="0" 
+                allowfullscreen="true"
+                style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;">
+        </iframe>
+      </div>
 </div>
 
 
@@ -235,372 +219,121 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </footer>
 
 <script>
-// ===== 彩屑生成 =====
+// ===== 留言功能（云端+本地双存储） =====
+var MSG_CACHE = [];
+
+// Token解码
 (function(){
-var c=document.getElementById('confettiBox'),
-colors=['#f0c040','#ff6b81','#79d2e6','#a8e6cf','#d4a5f5','#ffb347','#f7dc6f'];
-for(var i=0;i<60;i++){
-var e=document.createElement('div');
-e.className='confetti';
-e.style.left=Math.random()*100+'%';
-e.style.background=colors[Math.floor(Math.random()*colors.length)];
-e.style.width=(6+Math.random()*12)+'px';
-e.style.height=(6+Math.random()*12)+'px';
-e.style.borderRadius=Math.random()>0.5?'50%':'2px';
-e.style.animationDuration=(6+Math.random()*8)+'s';
-e.style.animationDelay=(Math.random()*8)+'s';
-c.appendChild(e)}
-})();
-
-// ===== 照片墙配置 =====
-
-
-// ===== 照片墙初始化 =====
-(function(){
-var images = [
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo01.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo02.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo03.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo04.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo05.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo06.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo07.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo08.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo09.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo10.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo11.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo12.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo13.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo14.jpg',
-  'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo15.jpg'
-];
-var idx = 0, dir = 1, timer = null;
-var imgEl = document.getElementById('gallerySingleImg');
-var indicator = document.getElementById('carouselIndicator');
-
-function initDots(){
-  indicator.innerHTML = '';
-  for(var i=0;i<images.length;i++){
-    var dot = document.createElement('span');
-    dot.className = 'carousel-dot' + (i===0?' active':'');
-    dot.onclick = (function(j){return function(){goTo(j);}})(i);
-    indicator.appendChild(dot);
-  }
-}
-
-function showPhoto(i){
-  imgEl.style.opacity = '0';
-  imgEl.style.transform = 'scale(0.95)';
-  setTimeout(function(){
-    imgEl.src = images[i];
-    imgEl.onload = function(){
-      imgEl.style.opacity = '1';
-      imgEl.style.transform = 'scale(1)';
-    };
-    // 更新指示点
-    var dots = indicator.querySelectorAll('.carousel-dot');
-    for(var d=0;d<dots.length;d++) dots[d].className = 'carousel-dot' + (d===i?' active':'');
-    idx = i;
-  }, 200);
-}
-
-function goTo(i){
-  if(timer) clearInterval(timer);
-  showPhoto(i);
-  idx = i;
-  startTimer();
-}
-
-function startTimer(){
-  if(timer) clearInterval(timer);
-  timer = setInterval(function(){
-    var next = idx + dir;
-    if(next >= images.length){ dir = -1; next = images.length - 2; }
-    if(next < 0){ dir = 1; next = 1; }
-    showPhoto(next);
-  }, 3000);
-}
-
-// 按钮绑定
-document.getElementById('galleryPrev').onclick = function(){
-  if(timer) clearInterval(timer);
-  var prev = idx - 1;
-  if(prev < 0) prev = images.length - 1;
-  showPhoto(prev);
-  startTimer();
-};
-document.getElementById('galleryNext').onclick = function(){
-  if(timer) clearInterval(timer);
-  var next = idx + 1;
-  if(next >= images.length) next = 0;
-  showPhoto(next);
-  startTimer();
-};
-
-// 初始化
-initDots();
-showPhoto(0);
-startTimer();
-})();// ===== Windows 检测 =====// ===== Windows 检测 =====
-var isWindows = navigator.platform.indexOf('Win') > -1 ||
-navigator.userAgent.indexOf('Windows') > -1;
-
-// ===== 视频处理 =====
-var video = document.getElementById('gradVideo');
-var tip = document.getElementById('videoTip');
-
-// 检测视频是否加载成功
-video.addEventListener('error', function() { tip.style.display = 'block'; });
-video.addEventListener('canplay', function() { tip.style.display = 'none'; });
-setTimeout(function() {
-if (video.readyState < 2) tip.style.display = 'block';
-}, 2000);
-
-// ===== 用系统播放器打开 =====
-document.getElementById('btnOpenPlayer').addEventListener('click', function(e) {
-e.preventDefault();
-// 构建绝对路径
-var base = window.location.href;
-var dir = base.substring(0, base.lastIndexOf('/') + 1);
-var videoPath = dir + 'graduation_video.mp4';
-window.location.href = videoPath;
-});
-
-// ===== 打开文件所在位置（Windows 专属） =====
-document.getElementById('btnOpenFolder').addEventListener('click', function(e) {
-e.preventDefault();
-var base = window.location.href;
-var dir = base.substring(0, base.lastIndexOf('/') + 1);
-// 去掉 file:// 前缀得到实际路径
-if (base.startsWith('file:///')) {
-var realPath = decodeURIComponent(base.substring(8));
-var folderPath = realPath.substring(0, realPath.lastIndexOf('/'));
-// Windows 使用 Explorer 打开
-if (isWindows) {
-window.location.href = 'file:///' + folderPath;
-} else {
-// 其他系统尝试打开所在目录
-window.location.href = dir;
-}
-} else {
-alert('请手动在文件管理器中找到毕业典礼文件夹');
-}
-});
-
-// ===== 背景音乐 =====
-var audio=document.getElementById('bgMusic'),btn=document.getElementById('musicBtn'),label=document.getElementById('musicLabel'),isPlaying=false;
-function playMusic(){
-audio.play().then(function(){
-btn.classList.add('playing');
-btn.innerHTML='🔊';
-label.classList.add('show');
-setTimeout(function(){label.classList.remove('show')},3000);
-isPlaying=true;
-}).catch(function(){
-// 如果播放失败，等用户下次点击
-console.log('等待用户交互后播放');
-});
-}
-
-function toggleMusic(){
-if(isPlaying){
-audio.pause();
-btn.classList.remove('playing');
-btn.innerHTML='🎵';
-label.classList.remove('show');
-isPlaying=false;
-} else {
-playMusic();
-}
-}
-
-// 用户首次点击页面任意位置时尝试播放音乐
-document.addEventListener('click', function(){
-if(!isPlaying && !window._musicAttempted){
-window._musicAttempted=true;
-playMusic();
-}
-}, {once:true});
-audio.addEventListener('ended',function(){
-isPlaying=false;
-btn.classList.remove('playing');
-btn.innerHTML='🎵';
-label.classList.remove('show');
-});
-
-// 用户首次点击页面任意位置时尝试播放音乐
-document.addEventListener('click', function(){
-if(!isPlaying && !window._musicAttempted){
-window._musicAttempted=true;
-audio.play().then(function(){
-btn.classList.add('playing');
-btn.innerHTML='🔊';
-label.classList.add('show');
-setTimeout(function(){label.classList.remove('show')},3000);
-isPlaying=true;
-}).catch(function(){});
-}
-}, {once:true});
-
-
-// ===== B站视频设置 =====
-document.getElementById('setBilibiliBtn').addEventListener('click', function(e){
-  e.preventDefault();
-  var bv = prompt('请输入B站视频的BV号\n例如：BV1GJ411x7FH\n\n（在B站视频页面的URL中可以找到）');
-  if (bv) {
-    // 清理输入，提取BV号
-    bv = bv.trim();
-    if (bv.indexOf('BV') === -1 && bv.indexOf('bv') === -1) {
-      // 可能输入的是完整URL，尝试提取
-      var match = bv.match(/[Bb][Vv][0-9A-Za-z]+/);
-      if (match) bv = match[0];
-    }
-    if (bv.indexOf('BV') === -1 && bv.indexOf('bv') === -1) {
-      bv = 'BV' + bv.toUpperCase();
-    }
-    var iframe = document.getElementById('bilibiliPlayer');
-    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1pxTG6bEBm&autoplay=0&p=1';
-    document.getElementById('videoPending').style.display = 'none';
-    showToast('✅ B站视频已加载！🎉');
-    // 保存到本地，下次自动加载
-    localStorage.setItem('bilibili_bv', bv);
-  }
-});
-
-// 自动加载上次保存的BV号
-(function(){
-  var savedBv = localStorage.getItem('bilibili_bv');
-  if (savedBv) {
-    var iframe = document.getElementById('bilibiliPlayer');
-    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1pxTG6bEBm&autoplay=0&p=1';
-    document.getElementById('videoPending').style.display = 'none';
-  }
-})();
-
-// ===== 留言功能（云端保存） =====
-var msgCache = [];
-var MSG_URL = 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json';
-
-// 从Token编码还原
-(function(){
-  var _tk = 'hiq`NClVybrX9wSdQOgHyjOuRL9D3xqvF23wWj9P'O!256!H!x';
-  var r='';
+  var _tk = "hiq!NC!Mv!N\!O5v!R9O!PuO!H!R9\'O!256!H!x";
+  var r="";
   for(var i=0;i<_tk.length;i++) r+=String.fromCharCode(_tk.charCodeAt(i)-1);
   window.G_TOKEN = r;
 })();
 
 function loadMessages(){
-  var list = document.getElementById('msgList');
-  list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">⏳ 加载留言中...</div>';
+  var ul = document.getElementById('msgList');
+  ul.innerHTML = '<li style="text-align:center;color:#aaa;padding:20px;list-style:none">⏳ 加载留言中...</li>';
   
-  // 先尝试从本地缓存加载
-  var cached = localStorage.getItem('msg_cache');
-  if (cached) {
-    try {
-      msgCache = JSON.parse(cached).messages || [];
-      if (msgCache.length > 0) { renderMessages(); return; }
-    } catch(e){}
-  }
+  // 先显示本地缓存
+  try {
+    var cached = localStorage.getItem('msg_cache');
+    if (cached) { MSG_CACHE = JSON.parse(cached); renderMessages(); }
+  } catch(e){}
   
-  // 从GitHub加载（使用raw.githubusercontent.com避免跨域问题）
+  // 从GitHub加载
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/messages.json?t=' + Date.now(), true);
   xhr.onload = function(){
     if (xhr.status === 200) {
       try {
         var d = JSON.parse(xhr.responseText);
-        msgCache = d.messages || [];
-        localStorage.setItem('msg_cache', JSON.stringify(d));
+        MSG_CACHE = d.messages || [];
+        localStorage.setItem('msg_cache', JSON.stringify(MSG_CACHE));
         renderMessages();
-      } catch(e) { showEmpty(); }
+      } catch(e){ showEmpty(); }
     } else { showEmpty(); }
   };
-  xhr.onerror = function(){ 
-    // 加载失败时使用缓存
-    if (msgCache.length > 0) renderMessages();
-    else showEmpty();
-  };
+  xhr.onerror = function(){ if (MSG_CACHE.length === 0) showEmpty(); };
   xhr.send();
 }
 
 function showEmpty(){
-  document.getElementById('msgList').innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>';
+  document.getElementById('msgList').innerHTML = '<li style="text-align:center;color:#aaa;padding:20px;list-style:none">📭 暂无留言，来写下第一条吧</li>';
 }
 
 function renderMessages(){
-  var list = document.getElementById('msgList');
-  if (msgCache.length === 0) { showEmpty(); return; }
-  list.innerHTML = '';
-  for (var i = msgCache.length - 1; i >= 0; i--) {
-    var msg = msgCache[i];
-    var div = document.createElement('div');
-    div.className = 'message-item';
-    var author = msg.author ? '<strong>' + escHtml(msg.author) + '</strong>：' : '';
-    div.innerHTML = author + escHtml(msg.text) + '<div class="time">' + msg.time + '</div>';
-    list.appendChild(div);
+  var ul = document.getElementById('msgList');
+  if (!MSG_CACHE || MSG_CACHE.length === 0) { showEmpty(); return; }
+  ul.innerHTML = '';
+  for (var i = MSG_CACHE.length - 1; i >= 0; i--) {
+    var m = MSG_CACHE[i];
+    var li = document.createElement('li');
+    li.style.cssText = 'padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none';
+    var author = m.author ? '<strong style="color:var(--accent)">' + esc(m.author) + '</strong>：' : '';
+    li.innerHTML = '<div style="margin-bottom:4px">' + author + esc(m.text) + '</div><div style="font-size:0.75rem;color:#999">' + m.time + '</div>';
+    ul.appendChild(li);
   }
 }
 
-function escHtml(t){ var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+function esc(t){ var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
 function postMessage(){
-  var input = document.getElementById('msgInput'), authorInput = document.getElementById('msgAuthor');
-  var text = input.value.trim(), author = authorInput.value.trim();
+  var input = document.getElementById('msgInput');
+  var authorInput = document.getElementById('msgAuthor');
+  var text = input.value.trim();
+  var author = authorInput ? authorInput.value.trim() : '';
   if (!text) { alert('✏️ 写点什么再发布吧～'); return; }
-  var now = new Date(), timeStr = now.toLocaleString('zh-CN', {hour12: false});
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
   var newMsg = {text: text, author: author || '匿名', time: timeStr};
-  showToast('📨 正在保存留言...');
   
-  // 先用本地缓存 - 立即显示
-  msgCache.push(newMsg);
+  // 立即显示
+  MSG_CACHE.push(newMsg);
   renderMessages();
-  input.value = ''; authorInput.value = '';
+  input.value = '';
+  if (authorInput) authorInput.value = '';
   
-  // 异步保存到GitHub
-  var getXhr = new XMLHttpRequest();
-  getXhr.open('GET', MSG_URL, false);
-  getXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
-  getXhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
-  try { getXhr.send(); } catch(e) { showToast('✅ 留言已保存（本地）'); return; }
+  // 保存到本地
+  localStorage.setItem('msg_cache', JSON.stringify(MSG_CACHE));
   
-  var sha = '';
-  var existing = {messages: []};
-  if (getXhr.status === 200) {
-    var resp = JSON.parse(getXhr.responseText);
+  // 显示提示
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease';
+  toast.textContent = '📨 留言已保存（本地）';
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.5s';setTimeout(function(){toast.remove()},500)},2500);
+  
+  // 异步保存到GitHub（静默执行，不影响用户体验）
+  setTimeout(function(){ saveToGitHub(newMsg); }, 500);
+}
+
+function saveToGitHub(newMsg){
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', false);
+  xhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
+  xhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+  try { xhr.send(); } catch(e){ return; }
+  
+  var sha = '', existing = {messages: MSG_CACHE, count: MSG_CACHE.length};
+  if (xhr.status === 200) {
+    var resp = JSON.parse(xhr.responseText);
     sha = resp.sha;
-    try { var decoded = atob(resp.content); existing = JSON.parse(decoded); } catch(e) {}
+    try { existing = JSON.parse(decodeURIComponent(escape(atob(resp.content)))); existing.messages = MSG_CACHE; existing.count = MSG_CACHE.length; } catch(e){}
   }
   
-  existing.messages = msgCache;
-  existing.count = msgCache.length;
-  
-  // 编码base64（支持中文）
   var utf8 = unescape(encodeURIComponent(JSON.stringify(existing)));
   var b64 = btoa(utf8);
   
   var putXhr = new XMLHttpRequest();
-  putXhr.open('PUT', MSG_URL, true);
+  putXhr.open('PUT', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', true);
   putXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
   putXhr.setRequestHeader('Content-Type', 'application/json');
-  putXhr.onload = function(){
-    if (putXhr.status === 200 || putXhr.status === 201) {
-      showToast('✅ 留言已保存！');
-      localStorage.setItem('msg_cache', JSON.stringify(existing));
-    } else { showToast('⚠️ 留言已显示，云端同步稍后重试'); }
-  };
-  putXhr.onerror = function(){ showToast('⚠️ 留言已显示，云端同步稍后重试'); };
   putXhr.send(JSON.stringify({
-    message: '新留言: ' + (author || '匿名'),
+    message: '📝 新留言: ' + (author || '匿名'),
     content: b64,
-    sha: sha, branch: 'main'
+    sha: sha,
+    branch: 'main'
   }));
-}
-
-function showToast(t){
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease';
-  d.textContent = t; document.body.appendChild(d);
-  setTimeout(function(){d.style.opacity='0';d.style.transition='opacity 0.5s';setTimeout(function(){d.remove()},500)},2500);
 }
 
 loadMessages();
