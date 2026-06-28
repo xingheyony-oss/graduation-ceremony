@@ -87,21 +87,21 @@ section{padding:clamp(50px,8vh,120px) 4vw}
 // ===== 照片墙模块 =====
 (function(){
 var images = [
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo01.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo02.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo03.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo04.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo05.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo06.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo07.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo08.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo09.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo10.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo11.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo12.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo13.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo14.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo15.jpg"
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo01.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo02.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo03.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo04.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo05.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo06.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo07.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo08.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo09.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo10.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo11.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo12.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo13.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo14.jpg",
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo15.jpg"
 ];
 var idx=0,dir=1,timer=;
 var imgEl=document.getElementById("gallerySingleImg");
@@ -120,7 +120,7 @@ function showPhoto(i){
   imgEl.style.opacity="0";imgEl.style.transform="scale(0.95)";
   setTimeout(function(){
     imgEl.src=images[i];imgEl.onload=function(){imgEl.style.opacity="1";imgEl.style.transform="scale(1)";};
-    imgEl.onerror=function(){imgEl.src="";imgEl.alt="照片加载失败";imgEl.style.opacity="1";};
+    imgEl.onerror=function(){this.src="https://ghproxy.net/https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/"+images[idx].split("/").pop();this.onerror=function(){this.alt="照片加载失败";};};
   },200);
   var dots=indicator.querySelectorAll("span");
   for(var d=0;d<dots.length;d++)dots[d].className=(d===i?"active":"");
