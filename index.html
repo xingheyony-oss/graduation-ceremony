@@ -239,7 +239,7 @@ function postMessage(){
   setTimeout(function(){saveToGitHub(newMsg);},500);
 }
 function syncToGitHub(){saveToGitHub(null);}
-function saveToGitHub(newMsg){if(newMsg===){newMsg={};}
+function saveToGitHub(newMsg){if(newMsg===||newMsg===undefined){newMsg={};}
   fetch('https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json',{headers:{'Authorization':'token '+G_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(function(r){return r.json();}).then(function(resp){
     var sha=resp.sha;var existing={messages:MSG_CACHE,count:MSG_CACHE.length};
     try{existing=JSON.parse(decodeURIComponent(escape(atob(resp.content))));existing.messages=MSG_CACHE;existing.count=MSG_CACHE.length;}catch(e){}
