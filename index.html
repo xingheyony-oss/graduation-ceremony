@@ -251,6 +251,7 @@ var galleryConfig = {
 };
 
 // ===== 照片墙初始化 =====
+
 (function(){
 var images = galleryConfig.images;
 var grid = document.getElementById('galleryGrid');
@@ -264,6 +265,8 @@ var modalCounter = document.getElementById('modalCounter');
 var basePath = galleryConfig.basePath;
 var currentIndex = 0;
 var timer = null;
+var autoTimer = null;
+var isAutoPlaying = true;
 
 // 加载时随机打乱
 if (galleryConfig.shuffleOnLoad) {
@@ -300,37 +303,78 @@ images.forEach(function(_, idx){
   dot.className = 'carousel-dot';
   if (idx === 0) dot.classList.add('active');
   dot.addEventListener('click', function(){
-    stopTimer();
-    // 滚动到对应照片位置（模拟点击）
+    isAutoPlaying = false;
+    stopAutoTimer();
+    selectImage(idx);
     var items = grid.querySelectorAll('.gallery-item');
     if (items[idx]) {
       items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      items[idx].style.transform = 'scale(1.04)';
-      setTimeout(function(){ items[idx].style.transform = ''; }, 800);
     }
     openModal(idx);
   });
   indicator.appendChild(dot);
 });
 
+// 选中某张照片：高亮 + 滚动
+function selectImage(idx){
+  currentIndex = idx;
+  var items = grid.querySelectorAll('.gallery-item');
+  var dots = indicator.querySelectorAll('.carousel-dot');
+  items.forEach(function(item, i){
+    item.style.transform = i === idx ? 'scale(1.04)' : '';
+    item.style.boxShadow = i === idx ? '0 8px 35px rgba(240,192,64,0.35), 0 4px 20px rgba(0,0,0,0.15)' : '';
+    item.style.zIndex = i === idx ? '5' : '';
+  });
+  dots.forEach(function(d, i){
+    d.classList.toggle('active', i === idx);
+  });
+  // 滚动到可视区域
+  if (items[idx]) {
+    items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}
+
+// 自动播放下一个
+function autoNext(){
+  var nextIdx = (currentIndex + 1) % images.length;
+  selectImage(nextIdx);
+}
+
+// 开始自动轮播
+function startAutoTimer(){
+  stopAutoTimer();
+  if (images.length <= 1) return;
+  isAutoPlaying = true;
+  autoTimer = setInterval(autoNext, galleryConfig.interval);
+}
+
+function stopAutoTimer(){
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  isAutoPlaying = false;
+}
+
+function restartAutoTimer(){
+  stopAutoTimer();
+  startAutoTimer();
+}
+
 // 打开大图弹窗
 function openModal(idx){
+  stopAutoTimer();
   currentIndex = idx;
   modalImg.src = basePath + images[idx].file;
   modalImg.alt = images[idx].name || '毕业照片';
   modalCounter.textContent = (idx + 1) + ' / ' + images.length;
   modal.classList.add('active');
-  stopTimer();
-  // 更新指示点
-  updateDots(idx);
   document.body.style.overflow = 'hidden';
+  selectImage(idx);
 }
 
 // 关闭弹窗
 function closeModal(){
   modal.classList.remove('active');
   document.body.style.overflow = '';
-  startTimer();
+  restartAutoTimer();
 }
 
 // 切换上一张/下一张
@@ -339,7 +383,7 @@ function prevImage(){
   modalImg.src = basePath + images[currentIndex].file;
   modalImg.alt = images[currentIndex].name || '毕业照片';
   modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  updateDots(currentIndex);
+  selectImage(currentIndex);
 }
 
 function nextImage(){
@@ -347,44 +391,7 @@ function nextImage(){
   modalImg.src = basePath + images[currentIndex].file;
   modalImg.alt = images[currentIndex].name || '毕业照片';
   modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  updateDots(currentIndex);
-}
-
-// 更新指示点
-function updateDots(idx){
-  var dots = indicator.querySelectorAll('.carousel-dot');
-  dots.forEach(function(d, i){
-    d.classList.toggle('active', i === idx);
-  });
-}
-
-// 自动轮播（每 interval 毫秒切换一张）
-function startTimer(){
-  stopTimer();
-  if (images.length > 1) {
-    timer = setInterval(function(){
-      // 高亮下一张
-      var items = grid.querySelectorAll('.gallery-item');
-      var nextIdx = (currentIndex + 1) % images.length;
-      // 应用闪烁效果
-      items.forEach(function(item, i){
-        if (i === nextIdx) {
-          item.style.boxShadow = '0 0 30px rgba(240,192,64,0.4), 0 4px 20px rgba(0,0,0,0.1)';
-          item.style.transform = 'scale(1.02)';
-          setTimeout(function(){
-            item.style.boxShadow = '';
-            item.style.transform = '';
-          }, 600);
-        }
-      });
-      currentIndex = nextIdx;
-      updateDots(currentIndex);
-    }, galleryConfig.interval);
-  }
-}
-
-function stopTimer(){
-  if (timer) { clearInterval(timer); timer = null; }
+  selectImage(currentIndex);
 }
 
 // 事件绑定
@@ -405,7 +412,7 @@ modal.addEventListener('click', function(e){
   if (e.target === modal) closeModal();
 });
 
-// 触摸滑动手势支持（大屏触摸）
+// 触摸滑动手势
 var touchStartX = 0;
 modal.addEventListener('touchstart', function(e){
   touchStartX = e.changedTouches[0].screenX;
@@ -419,10 +426,10 @@ modal.addEventListener('touchend', function(e){
 });
 
 // 开始自动轮播
-startTimer();
-
-console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，每 ' + (galleryConfig.interval/1000) + ' 秒自动轮播');
+startAutoTimer();
+console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，每 ' + (galleryConfig.interval/1000) + ' 秒循环播放');
 })();
+
 
 // ===== Windows 检测 =====
 var isWindows = navigator.platform.indexOf('Win') > -1 ||
