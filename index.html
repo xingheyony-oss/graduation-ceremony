@@ -222,6 +222,7 @@ function postMessage(){
   var authorInput=document.getElementById('msgAuthor');
   var text=input.value.trim();
   var author=authorInput?authorInput.value.trim():'';
+  if(!text){alert('✏️ 写点什么再发布吧～');return;}
   var now=new Date();
   var timeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   var newMsg={text:text,author:author||'匿名',time:timeStr};
