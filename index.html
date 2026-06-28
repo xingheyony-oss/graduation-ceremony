@@ -310,7 +310,14 @@ function renderMessages(){
     var li = document.createElement('li');
     li.style.cssText = 'padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none';
     var author = m.author ? '<strong style="color:var(--accent)">' + esc(m.author) + '</strong>：' : '';
-    li.innerHTML = '<div style="margin-bottom:4px">' + author + esc(m.text) + '</div><div style="font-size:0.75rem;color:#999">' + m.time + '</div>';
+    li.innerHTML = '<div style="margin-bottom:4px">' + author + esc(m.text) + '</div><div style="font-size:0.75rem;color:#999">' + m.time + '</div>
+<div class="bilibili-video-wrapper" id="bilibiliVideo">
+        <iframe src="//player.bilibili.com/player.html?isOutside=true&bvid=BV1pxTG6bEBm&p=1&autoplay=0" 
+                scrolling="no" border="0" frameborder="no" framespacing="0" 
+                allowfullscreen="true"
+                style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;">
+        </iframe>
+      </div>';
     ul.appendChild(li);
   }
 }
