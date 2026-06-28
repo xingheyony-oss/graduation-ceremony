@@ -511,6 +511,20 @@ btn.innerHTML='🎵';
 label.classList.remove('show');
 });
 
+// 用户首次点击页面任意位置时尝试播放音乐
+document.addEventListener('click', function(){
+if(!isPlaying && !window._musicAttempted){
+window._musicAttempted=true;
+audio.play().then(function(){
+btn.classList.add('playing');
+btn.innerHTML='🔊';
+label.classList.add('show');
+setTimeout(function(){label.classList.remove('show')},3000);
+isPlaying=true;
+}).catch(function(){});
+}
+}, {once:true});
+
 // ===== 留言功能 =====
 function loadMessages(){
 var list=document.getElementById('msgList'),
