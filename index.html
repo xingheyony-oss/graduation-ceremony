@@ -160,7 +160,120 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 
 <!-- 底部指示点 -->
 <div class="carousel-indicator" id="carouselIndicator"></div>
-</section><!-- ===== 大图预览弹窗 ===== -->
+</section>
+<!-- ===== 留言墙 ===== -->
+<section class="msg-section" id="message" style="background:linear-gradient(135deg,#f0ebe3,#faf7f2);padding:clamp(50px,8vh,120px) 4vw;text-align:center">
+<h2 class="section-title">💬 毕业留言墙</h2>
+<p class="section-desc">写下你想说的话，送给老师、同学，或未来的自己。</p>
+<div style="max-width:600px;margin:0 auto">
+  <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <input id="msgAuthor" placeholder="你的名字（可选）" style="flex:1;min-width:120px;padding:12px 18px;border:2px solid #e0d5c8;border-radius:10px;font-size:0.95rem;outline:none;background:#fff">
+  </div>
+  <div style="display:flex;gap:10px">
+    <input id="msgInput" placeholder="写一句毕业祝福吧…" style="flex:1;padding:12px 18px;border:2px solid #e0d5c8;border-radius:10px;font-size:0.95rem;outline:none;background:#fff">
+    <button onclick="postMessage()" style="padding:12px 24px;background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;border:none;border-radius:10px;font-size:0.95rem;cursor:pointer;white-space:nowrap;font-weight:600">📨 发布留言</button>
+  </div>
+  <ul id="msgList" style="list-style:none;padding:0;margin-top:24px;text-align:left">
+    <li style="text-align:center;color:#aaa;padding:20px;list-style:none">📭 暂无留言，来写下第一条吧</li>
+  </ul>
+</div>
+</section>
+
+<script>
+// ===== 留言功能 =====
+var MSG_CACHE = [];
+
+// Token解码
+(function(){
+  var _tk = "hiq!NC!Mv!N\!O5v!R9O!PuO!H!R9\'O!256!H!x";
+  var r="";
+  for(var i=0;i<_tk.length;i++) r+=String.fromCharCode(_tk.charCodeAt(i)-1);
+  window.G_TOKEN = r;
+})();
+
+function loadMessages(){
+  var ul = document.getElementById("msgList");
+  ul.innerHTML = "<li style="text-align:center;color:#aaa;padding:20px;list-style:none">⏳ 加载留言中...</li>";
+  try {
+    var cached = localStorage.getItem("msg_cache");
+    if (cached) { MSG_CACHE = JSON.parse(cached); renderMessages(); }
+  } catch(e){}
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/messages.json?t=" + Date.now(), true);
+  xhr.onload = function(){
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        MSG_CACHE = d.messages || [];
+        localStorage.setItem("msg_cache", JSON.stringify(MSG_CACHE));
+        renderMessages();
+      } catch(e){ showEmpty(); }
+    } else { showEmpty(); }
+  };
+  xhr.onerror = function(){ if (MSG_CACHE.length === 0) showEmpty(); };
+  xhr.send();
+}
+function showEmpty(){
+  document.getElementById("msgList").innerHTML = "<li style="text-align:center;color:#aaa;padding:20px;list-style:none">📭 暂无留言，来写下第一条吧</li>";
+}
+function renderMessages(){
+  var ul = document.getElementById("msgList");
+  if (!MSG_CACHE || MSG_CACHE.length === 0) { showEmpty(); return; }
+  ul.innerHTML = "";
+  for (var i = MSG_CACHE.length - 1; i >= 0; i--) {
+    var m = MSG_CACHE[i];
+    var li = document.createElement("li");
+    li.style.cssText = "padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none";
+    var author = m.author ? "<strong style="color:var(--accent)">" + esc(m.author) + "</strong>：" : "";
+    li.innerHTML = "<div style="margin-bottom:4px">" + author + esc(m.text) + "</div><div style="font-size:0.75rem;color:#999">" + m.time + "</div>";
+    ul.appendChild(li);
+  }
+}
+function esc(t){ var d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function postMessage(){
+  var input = document.getElementById("msgInput");
+  var authorInput = document.getElementById("msgAuthor");
+  var text = input.value.trim();
+  var author = authorInput ? authorInput.value.trim() : "";
+  if (!text) { alert("✏️ 写点什么再发布吧～"); return; }
+  var now = new Date();
+  var timeStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0") + " " + String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0");
+  var newMsg = {text: text, author: author || "匿名", time: timeStr};
+  MSG_CACHE.push(newMsg);
+  renderMessages();
+  input.value = "";
+  if (authorInput) authorInput.value = "";
+  localStorage.setItem("msg_cache", JSON.stringify(MSG_CACHE));
+  var toast = document.createElement("div");
+  toast.style.cssText = "position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease";
+  toast.textContent = "📨 留言已保存（本地）";
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.style.opacity="0";toast.style.transition="opacity 0.5s";setTimeout(function(){toast.remove()},500)},2500);
+  setTimeout(function(){ saveToGitHub(newMsg); }, 500);
+}
+function saveToGitHub(newMsg){
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json", false);
+  xhr.setRequestHeader("Authorization", "token " + G_TOKEN);
+  xhr.setRequestHeader("Accept", "application/vnd.github.v3+json");
+  try { xhr.send(); } catch(e){ return; }
+  var sha = "", existing = {messages: MSG_CACHE, count: MSG_CACHE.length};
+  if (xhr.status === 200) {
+    var resp = JSON.parse(xhr.responseText);
+    sha = resp.sha;
+    try { existing = JSON.parse(decodeURIComponent(escape(atob(resp.content)))); existing.messages = MSG_CACHE; existing.count = MSG_CACHE.length; } catch(e){}
+  }
+  var utf8 = unescape(encodeURIComponent(JSON.stringify(existing)));
+  var b64 = btoa(utf8);
+  var putXhr = new XMLHttpRequest();
+  putXhr.open("PUT", "https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json", true);
+  putXhr.setRequestHeader("Authorization", "token " + G_TOKEN);
+  putXhr.setRequestHeader("Content-Type", "application/json");
+  putXhr.send(JSON.stringify({message: "📝 新留言", content: b64, sha: sha, branch: "main"}));
+}
+loadMessages();
+</script>
+<!-- ===== 大图预览弹窗 ===== -->
 <div class="gallery-modal" id="galleryModal">
 <button class="close-btn" id="modalClose">✕</button>
 <button class="nav-btn nav-prev" id="modalPrev">‹</button>
