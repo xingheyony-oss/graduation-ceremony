@@ -5,160 +5,120 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎓 均州中学 · 九年级1班 · 毕业典礼</title>
 <style>
-/* ===== 全局重置 ===== */
 *{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a2332;--accent:#2c3e7a;--gold:#c9a84c;--bg:#f5f0e8;--radius:16px}
 html{scroll-behavior:smooth}
-:root{--primary:#2c3e7a;--accent:#f0c040;--radius:12px;--bg:#faf7f2}
-body{font-family:-apple-system,"Microsoft YaHei",sans-serif;background:var(--bg);color:#333;overflow-x:hidden}
-
-/* ===== 动画 ===== */
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--primary);overflow-x:hidden}
+/* Header */
+header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(26,35,50,0.85);backdrop-filter:blur(12px);padding:12px 4vw;display:flex;justify-content:space-between;align-items:center}
+header .logo{font-size:clamp(1rem,2vw,1.2rem);font-weight:700;color:#fff;letter-spacing:1px}
+header nav{display:flex;gap:clamp(12px,2.5vw,30px)}
+header nav a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:clamp(0.8rem,1.3vw,0.95rem);transition:color 0.3s;position:relative}
+header nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--gold);transition:width 0.3s}
+header nav a:hover{color:#fff}
+header nav a:hover::after{width:100%}
+/* Sections */
+section{padding:clamp(40px,6vh,80px) 4vw}
+.section-title{font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:800;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,var(--accent),#4a6fa5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-desc{text-align:center;color:#888;margin-bottom:clamp(20px,3vh,40px);font-size:clamp(0.85rem,1.3vw,1rem)}
+/* Hero */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg,#1a2332 0%,#2c3e7a 50%,#4a6fa5 100%);position:relative;overflow:hidden;padding-top:80px}
+#hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(201,168,76,0.08) 0%,transparent 60%),radial-gradient(circle at 70% 60%,rgba(255,255,255,0.05) 0%,transparent 50%);animation:heroGlow 8s ease-in-out infinite alternate}
+@keyframes heroGlow{0%{transform:translate(0,0)}100%{transform:translate(2%,-2%)}}
+#hero h1{font-size:clamp(2rem,6vw,4.5rem);font-weight:900;color:#fff;position:relative;z-index:1;letter-spacing:3px;animation:fadeUp 1s ease}
+#hero .subtitle{font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);margin-top:16px;position:relative;z-index:1;animation:fadeUp 1s ease 0.2s both}
+#hero p{color:rgba(255,255,255,0.7);margin-top:20px;max-width:500px;position:relative;z-index:1;animation:fadeUp 1s ease 0.4s both;line-height:1.8}
+.scroll-down{position:absolute;bottom:clamp(20px,4vh,40px);z-index:1;color:rgba(255,255,255,0.5);font-size:1.5rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(240,192,64,0.4)}50%{box-shadow:0 0 0 15px rgba(240,192,64,0)}100%{box-shadow:0 0 0 0 rgba(240,192,64,0)}}
-section{animation:fadeUp 0.6s ease}
-
-/* ===== 导航栏 ===== */
-nav{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(44,62,122,0.95);backdrop-filter:blur(8px);display:flex;justify-content:center;gap:clamp(16px,4vw,40px);padding:clamp(10px,1.5vh,16px) 4vw;flex-wrap:wrap;box-shadow:0 2px 20px rgba(0,0,0,0.15)}
-nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:clamp(0.9rem,1.5vw,1.1rem);font-weight:600;padding:6px 14px;border-radius:8px;transition:all 0.3s}
-nav a:hover{background:rgba(255,255,255,0.12);color:#fff;transform:translateY(-1px)}
-
-/* ===== Hero主视觉 ===== */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 4vw;background:linear-gradient(135deg,#2c3e7a 0%,#4a6fa5 50%,#6b8fc9 100%);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px;animation:drift 60s linear infinite;pointer-events:none}
-@keyframes drift{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.hero h1{font-size:clamp(2rem,5vw,4rem);color:#fff;margin-bottom:12px;text-shadow:0 4px 30px rgba(0,0,0,0.3);position:relative;z-index:1}
-.hero .subtitle{font-size:clamp(1rem,2.5vw,2rem);color:var(--accent);margin-bottom:8px;position:relative;z-index:1}
-.hero .date{font-size:clamp(0.9rem,1.2vw,1.2rem);color:rgba(255,255,255,0.6);position:relative;z-index:1}
-.hero .scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.4);font-size:0.85rem;animation:bounce 2s infinite;z-index:1}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
-
-/* ===== 通用section ===== */
-section{padding:clamp(50px,8vh,120px) 4vw}
-.section-title{text-align:center;font-size:clamp(1.5rem,3vw,2.5rem);color:var(--primary);margin-bottom:8px}
-.section-title::after{content:'✦';display:block;color:var(--accent);font-size:clamp(1rem,1.5vw,1.8rem);margin-top:8px}
-.section-desc{text-align:center;color:#888;max-width:clamp(400px,45vw,700px);margin:0 auto clamp(24px,4vh,50px);font-size:clamp(0.95rem,1.6vw,1.3rem)}
-
-/* ===== 照片墙 ===== */
-.gallery-section{background:linear-gradient(135deg,#f0ebe3,#faf7f2)}
-.single-gallery{max-width:clamp(280px,50vw,800px);margin:0 auto;position:relative;z-index:1;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12);background:#fff}
-.gallery-viewport{width:100%;aspect-ratio:4/3;overflow:hidden;position:relative;background:#e8e0d6}
-.gallery-viewport img{width:100%;height:100%;object-fit:cover;transition:opacity 0.4s ease,transform 0.4s ease;display:block}
-.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.9);border:none;width:clamp(36px,5vw,48px);height:clamp(36px,5vw,48px);border-radius:50%;cursor:pointer;font-size:clamp(1rem,1.5vw,1.5rem);box-shadow:0 2px 12px rgba(0,0,0,0.15);transition:all 0.3s;display:flex;align-items:center;justify-content:center;color:#333}
-.gallery-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.1)}
-.gallery-arrow-left{left:clamp(8px,2vw,16px)}
-.gallery-arrow-right{right:clamp(8px,2vw,16px)}
-.carousel-indicator{display:flex;justify-content:center;gap:8px;padding:16px 0;flex-wrap:wrap}
-.carousel-indicator span{width:10px;height:10px;border-radius:50%;background:#ccc;cursor:pointer;transition:all 0.3s}
-.carousel-indicator span.active{background:var(--accent);transform:scale(1.3)}
-
+/* Photo Gallery */
+#gallery{max-width:900px;margin:0 auto}
+.gallery-container{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;border-radius:var(--radius);box-shadow:0 8px 40px rgba(0,0,0,0.12);background:#ddd}
+.gallery-container img{width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;display:block}
+.gallery-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;width:clamp(36px,5vw,48px);height:clamp(36px,5vw,48px);border-radius:50%;font-size:1.3rem;cursor:pointer;z-index:2;transition:all 0.3s;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+.gallery-btn:hover{background:#fff;box-shadow:0 4px 15px rgba(0,0,0,0.2)}
+.gallery-prev{left:12px}
+.gallery-next{right:12px}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.carousel-dots span{width:10px;height:10px;border-radius:50%;background:#ccc;cursor:pointer;transition:all 0.3s}
+.carousel-dots span.active{background:var(--accent);transform:scale(1.3)}
+/* Responsive Gallery Stack */
+@media(max-width:600px){.gallery-container{aspect-ratio:4/3}}
 </style>
 </head>
 <body>
 
-<!-- ===== 导航栏 ===== -->
-<nav>
-  <a href="#photos">📸 照片</a>
-  <a href="#video">🎬 视频</a>
-  <a href="#messages">💬 留言</a>
-</nav>
+<!-- Header -->
+<header>
+  <div class="logo">🎓 九年级1班</div>
+  <nav>
+    <a href="#gallery">📸 照片</a>
+    <a href="#video">🎬 视频</a>
+    <a href="#guestbook">💬 留言</a>
+  </nav>
+</header>
 
-<!-- ===== Hero主视觉 ===== -->
-<section class="hero">
-  <div class="subtitle">🏫 均州中学 · 九年级1班</div>
-  <h1>🎉 毕业啦！</h1>
-  <div class="date">致我们滚烫的青春 · 2023-2026</div>
-  <div class="scroll-hint">↓ 向下滚动</div>
+<!-- Hero -->
+<section id="hero">
+  <h1>🎓 我们毕业啦！</h1>
+  <div class="subtitle">均州中学 · 九年级1班</div>
+  <p>始于初秋，终于盛夏。三年的时光转瞬即逝，但那些一起奋斗的日子，将永远闪耀在青春的记忆里。</p>
+  <div class="scroll-down">⌄</div>
 </section>
 
-
-<section class="gallery-section" id="photos">
+<!-- 照片墙 -->
+<section id="gallery">
   <h2 class="section-title">📸 青春纪念册</h2>
-  <p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
-  <div class="single-gallery">
-    <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
-    <div class="gallery-viewport" id="galleryViewport">
-      <img id="gallerySingleImg" src="" alt="毕业照片" style="width:100%;height:100%;object-fit:cover;display:block">
-    </div>
-    <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
+  <p class="section-desc">每一张照片，都是我们曾经并肩的证明</p>
+  <div class="gallery-container">
+    <img id="gallerySingleImg" src="" alt="毕业照片" style="opacity:0">
+    <button class="gallery-btn gallery-prev" onclick="changePhoto(-1)">‹</button>
+    <button class="gallery-btn gallery-next" onclick="changePhoto(1)">›</button>
   </div>
-  <div class="carousel-indicator" id="carouselIndicator"></div>
+  <div class="carousel-dots" id="carouselIndicator"></div>
 </section>
 
 <script>
 // ===== 照片墙模块 =====
-(function(){
-var images = [
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo01.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo02.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo03.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo04.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo05.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo06.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo07.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo08.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo09.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo10.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo11.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo12.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo13.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo14.jpg",
-  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo15.jpg"
-];
-var idx=0,dir=1,timer=;
-var imgEl=document.getElementById("gallerySingleImg");
-var indicator=document.getElementById("carouselIndicator");
-function initDots(){
-  indicator.innerHTML="";
-  for(var i=0;i<images.length;i++){
-    var dot=document.createElement("span");
-    dot.onclick=function(){goTo(parseInt(this.dataset.idx));};
-    dot.dataset.idx=i;
-    if(i===0) dot.className="active";
-    indicator.appendChild(dot);
+var images=[];
+for(var i=1;i<=15;i++)images.push(i);
+var idx=0,dir=1,timer;
+var CDNS=['https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo','https://ghproxy.net/https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo','https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo'];
+function loadPhoto(n){
+  var img=document.getElementById('gallerySingleImg');
+  img.style.opacity='0';
+  var cdnIdx=0;
+  function tryCDN(){
+    if(cdnIdx>=CDNS.length){img.alt='照片加载失败';img.style.opacity='0.3';return;}
+    img.onload=function(){img.style.opacity='1';};
+    img.onerror=function(){cdnIdx++;setTimeout(tryCDN,200);};
+    img.src=CDNS[cdnIdx]+String(n).padStart(2,'0')+'.jpg';
   }
+  tryCDN();
 }
-function showPhoto(i){
-  imgEl.style.opacity="0";imgEl.style.transform="scale(0.95)";
-  setTimeout(function(){
-    imgEl.src=images[i];imgEl.onload=function(){imgEl.style.opacity="1";imgEl.style.transform="scale(1)";};
-    imgEl.onerror=function(){imgEl.src="";imgEl.alt="照片加载失败";imgEl.style.opacity="1";};
-  },200);
-  var dots=indicator.querySelectorAll("span");
-  for(var d=0;d<dots.length;d++)dots[d].className=(d===i?"active":"");
-  idx=i;
+function showPhoto(n){idx=((n%images.length)+images.length)%images.length;loadPhoto(images[idx]);updateDots();}
+function updateDots(){var dots=document.getElementById('carouselIndicator').children;for(var i=0;i<dots.length;i++)dots[i].className=(i===idx?'active':'');}
+function initDots(){
+  var container=document.getElementById('carouselIndicator');container.innerHTML='';
+  for(var i=0;i<images.length;i++){var dot=document.createElement('span');dot.onclick=function(i){return function(){showPhoto(i);resetTimer();}}(i);container.appendChild(dot);}
 }
-function goTo(i){if(timer)clearInterval(timer);showPhoto(i);idx=i;startTimer();}
-function startTimer(){
-  if(timer)clearInterval(timer);
-  timer=setInterval(function(){
-    var next=idx+dir;
-    if(next>=images.length){dir=-1;next=images.length-2;}
-    if(next<0){dir=1;next=1;}
-    showPhoto(next);
-  },3000);
-}
-document.getElementById("galleryPrev").onclick=function(){
-  if(timer)clearInterval(timer);var prev=idx-1;if(prev<0)prev=images.length-1;
-  showPhoto(prev);startTimer();
-};
-document.getElementById("galleryNext").onclick=function(){
-  if(timer)clearInterval(timer);var next=idx+1;if(next>=images.length)next=0;
-  showPhoto(next);startTimer();
-};
+function changePhoto(d){showPhoto(idx+d);resetTimer();}
+function startTimer(){timer=setInterval(function(){if(idx>=images.length-1)dir=-1;if(idx<=0)dir=1;showPhoto(idx+dir);},3000);}
+function resetTimer(){clearInterval(timer);startTimer();}
 initDots();showPhoto(0);startTimer();
-})();
 </script>
 
-
-<section class="video-section" id="video" style="background:linear-gradient(135deg,#2c3e7a,#4a6fa5);text-align:center">
-  <h2 class="section-title" style="color:#fff">🎬 毕业纪念视频</h2>
-  <p class="section-desc" style="color:rgba(255,255,255,0.7)">重温那些一起走过的日子</p>
-  <div class="bilibili-video-wrapper" id="bilibiliVideo" style="width:100%;max-width:800px;margin:0 auto;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.15)">
-    <iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=BV1pxTG6bEBm&p=1&autoplay=0" style="width:100%;aspect-ratio:16/9;display:block;border:none" allowfullscreen></iframe>
+<!-- B站视频 -->
+<section id="video" style="max-width:800px;margin:0 auto">
+  <h2 class="section-title">🎬 毕业纪念视频</h2>
+  <p class="section-desc">重温那些一起走过的日子</p>
+  <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12)">
+    <iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=BV1pxTG6bEBm&p=1&autoplay=0" style="width:100%;height:100%;border:none" allowfullscreen></iframe>
   </div>
 </section>
 
-
-<section class="msg-section" id="messages" style="background:linear-gradient(135deg,#f0ebe3,#faf7f2);text-align:center">
+<!-- 留言墙 -->
+<section id="guestbook" style="max-width:700px;margin:0 auto">
   <h2 class="section-title">💬 毕业留言墙</h2>
   <p class="section-desc">写下你想说的话，送给老师、同学，或未来的自己。</p>
   <div style="max-width:600px;margin:0 auto">
@@ -179,6 +139,7 @@ initDots();showPhoto(0);startTimer();
 // ===== 留言功能模块 =====
 var MSG_CACHE = [];
 
+// Token编码：每个字符ASCII码+1
 var _tk="hiq`NClVybrX9wSdQOgHyjOuRL9D3xqvF23wWj9P";
 var G_TOKEN=(function(){var s="";for(var i=0;i<_tk.length;i++){var c=_tk.charCodeAt(i);if(c===92){i++;s+=String.fromCharCode(_tk.charCodeAt(i)-1);}else{s+=String.fromCharCode(c-1);}}return s;})();
 
@@ -197,21 +158,43 @@ function loadMessages(){
 function showEmpty(){document.getElementById('msgList').innerHTML='<li style="text-align:center;color:#aaa;padding:20px">📭 暂无留言</li>';}
 function renderMessages(){
   var ul=document.getElementById('msgList');
+  if(!ul)return;
   ul.innerHTML='';
   for(var i=MSG_CACHE.length-1;i>=0;i--){
     var m=MSG_CACHE[i];var li=document.createElement('li');
-    li.style.cssText='padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none';
+    li.style.cssText='padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none;position:relative';
     var author=m.author?'<strong style="color:var(--accent)">'+esc(m.author)+'</strong>：':'';
-    li.innerHTML='<div style="margin-bottom:4px">'+author+esc(m.text)+'</div><div style="font-size:0.75rem;color:#999">'+m.time+'</div>';
+    li.innerHTML='<div style="margin-bottom:4px;padding-right:40px">'+author+esc(m.text)+'</div><div style="font-size:0.75rem;color:#999">'+m.time+'</div>';
+    // 撤回按钮
+    var delBtn=document.createElement('span');
+    delBtn.textContent='撤回';
+    delBtn.style.cssText='position:absolute;top:10px;right:12px;color:#999;font-size:0.7rem;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all 0.2s';
+    delBtn.onmouseover=function(){this.style.color='#e74c3c';this.style.background='#fde8e8'};
+    delBtn.onmouseout=function(){this.style.color='#999';this.style.background='transparent'};
+    delBtn.onclick=(function(index){
+      return function(){
+        if(confirm('确定撤回这条留言吗？')){
+          MSG_CACHE.splice(index,1);
+          localStorage.setItem('msg_cache',JSON.stringify(MSG_CACHE));
+          renderMessages();
+          syncToGitHub();
+        }
+      };
+    })(i);
+    li.appendChild(delBtn);
     ul.appendChild(li);
   }
+  if(MSG_CACHE.length===0)showEmpty();
 }
-function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+function esc(t){if(!t)return '';var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function postMessage(){
   var input=document.getElementById('msgInput');
   var authorInput=document.getElementById('msgAuthor');
+  if(!input)return;
   var text=input.value.trim();
   var author=authorInput?authorInput.value.trim():'';
+  // 空文本判断
+  if(!text){alert('✏️ 写点什么再发布吧～');return;}
   var now=new Date();
   var timeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   var newMsg={text:text,author:author||'匿名',time:timeStr};
@@ -225,6 +208,7 @@ function postMessage(){
   setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.5s';setTimeout(function(){toast.remove()},500)},2500);
   setTimeout(function(){saveToGitHub(newMsg);},500);
 }
+function syncToGitHub(){saveToGitHub(null);}
 function saveToGitHub(newMsg){
   fetch('https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json',{headers:{'Authorization':'token '+G_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(function(r){return r.json();}).then(function(resp){
     var sha=resp.sha;var existing={messages:MSG_CACHE,count:MSG_CACHE.length};
@@ -236,11 +220,11 @@ function saveToGitHub(newMsg){
 loadMessages();
 </script>
 
+<!-- 背景音乐 -->
 <button id="musicBtn" class="music-btn" onclick="toggleMusic()" style="position:fixed;bottom:3vh;right:3vw;z-index:999;width:clamp(48px,5vw,70px);height:clamp(48px,5vw,70px);border-radius:50%;background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;border:none;font-size:clamp(1.2rem,2.5vw,1.8rem);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center">🎵</button>
 <audio id="bgMusic" src="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/background_music.mp3" loop preload="auto"></audio>
 <script>
-(function(){var bg=document.getElementById('bgMusic');var btn=document.getElementById('musicBtn');var playing=false;window.toggleMusic=function(){if(playing){bg.pause();btn.style.animation='';playing=false;}else{bg.play().then(function(){btn.style.animation='pulse 2s infinite';playing=true;}).catch(function(){})};};
-})();
+(function(){var bg=document.getElementById('bgMusic');var btn=document.getElementById('musicBtn');var playing=false;window.toggleMusic=function(){if(playing){bg.pause();btn.style.animation='';playing=false;}else{bg.play().then(function(){btn.style.animation='pulse 2s infinite';playing=true;}).catch(function(){})};};})();
 </script>
 
 <footer style="background:var(--primary);color:rgba(255,255,255,0.7);text-align:center;padding:clamp(30px,5vh,70px) 4vw">
