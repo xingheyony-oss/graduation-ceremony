@@ -86,26 +86,26 @@ section{padding:clamp(50px,8vh,120px) 4vw}
 <script>
 // ===== 照片墙模块 =====
 (function(){
-var images = [
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo01.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo02.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo03.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo04.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo05.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo06.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo07.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo08.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo09.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo10.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo11.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo12.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo13.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo14.jpg",
-  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/photo15.jpg"
+// 多重CDN链接 - 按优先级排列
+var CDNS = [
+  "https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/",
+  "https://ghproxy.net/https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/",
+  "https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/"
 ];
+var images = [];
+for(var i=1;i<=15;i++) images.push("photo"+(i<10?"0"+i:i)+".jpg");
 var idx=0,dir=1,timer=;
 var imgEl=document.getElementById("gallerySingleImg");
 var indicator=document.getElementById("carouselIndicator");
+var cdnIdx=0;
+
+function loadPhoto(index,cb){
+  if(cdnIdx>=CDNS.length){ imgEl.alt="照片加载失败";imgEl.style.opacity="1";if(cb)cb();return; }
+  imgEl.src=CDNS[cdnIdx]+images[index];
+  imgEl.onload=function(){ cdnIdx=0; if(cb)cb(); };
+  imgEl.onerror=function(){ cdnIdx++; setTimeout(function(){loadPhoto(index,cb);},200); };
+}
+
 function initDots(){
   indicator.innerHTML="";
   for(var i=0;i<images.length;i++){
@@ -118,10 +118,8 @@ function initDots(){
 }
 function showPhoto(i){
   imgEl.style.opacity="0";imgEl.style.transform="scale(0.95)";
-  setTimeout(function(){
-    imgEl.src=images[i];imgEl.onload=function(){imgEl.style.opacity="1";imgEl.style.transform="scale(1)";};
-    imgEl.onerror=function(){this.src="https://ghproxy.net/https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/"+images[idx].split("/").pop();this.onerror=function(){this.alt="照片加载失败";};};
-  },200);
+  cdnIdx=0;
+  setTimeout(function(){ loadPhoto(i,function(){imgEl.style.opacity="1";imgEl.style.transform="scale(1)";}); },200);
   var dots=indicator.querySelectorAll("span");
   for(var d=0;d<dots.length;d++)dots[d].className=(d===i?"active":"");
   idx=i;
@@ -145,8 +143,7 @@ document.getElementById("galleryNext").onclick=function(){
   showPhoto(next);startTimer();
 };
 initDots();showPhoto(0);startTimer();
-})();
-</script>
+})()</script>
 
 
 <section class="video-section" id="video" style="background:linear-gradient(135deg,#2c3e7a,#4a6fa5);text-align:center">
