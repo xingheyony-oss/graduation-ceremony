@@ -248,6 +248,70 @@ function saveToGitHub(newMsg){
 }
 
 loadMessages();
-</script>
+</s
+// ===== 照片墙初始化 =====
+(function(){
+var images = [
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo01.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo02.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo03.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo04.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo05.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo06.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo07.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo08.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo09.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo10.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo11.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo12.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo13.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo14.jpg',
+  'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/photos/photo15.jpg'
+];
+var idx = 0, dir = 1, timer = null;
+var imgEl = document.getElementById('gallerySingleImg');
+var indicator = document.getElementById('carouselIndicator');
+function initDots(){
+  indicator.innerHTML = '';
+  for(var i=0;i<images.length;i++){
+    var dot = document.createElement('span');
+    dot.className = 'carousel-dot' + (i===0?' active':'');
+    dot.onclick = (function(j){return function(){goTo(j);}})(i);
+    indicator.appendChild(dot);
+  }
+}
+function showPhoto(i){
+  imgEl.style.opacity = '0'; imgEl.style.transform = 'scale(0.95)';
+  setTimeout(function(){
+    imgEl.src = images[i];
+    imgEl.onload = function(){ imgEl.style.opacity = '1'; imgEl.style.transform = 'scale(1)'; };
+    imgEl.onerror = function(){ this.style.opacity = '1'; };
+    var dots = indicator.querySelectorAll('.carousel-dot');
+    for(var d=0;d<dots.length;d++) dots[d].className = 'carousel-dot' + (d===i?' active':'');
+    idx = i;
+  }, 200);
+}
+function goTo(i){ if(timer) clearInterval(timer); showPhoto(i); idx = i; startTimer(); }
+function startTimer(){
+  if(timer) clearInterval(timer);
+  timer = setInterval(function(){
+    var next = idx + dir;
+    if(next >= images.length){ dir = -1; next = images.length - 2; }
+    if(next < 0){ dir = 1; next = 1; }
+    showPhoto(next);
+  }, 3000);
+}
+document.getElementById('galleryPrev').onclick = function(){
+  if(timer) clearInterval(timer); var prev = idx - 1; if(prev < 0) prev = images.length - 1;
+  showPhoto(prev); startTimer();
+};
+document.getElementById('galleryNext').onclick = function(){
+  if(timer) clearInterval(timer); var next = idx + 1; if(next >= images.length) next = 0;
+  showPhoto(next); startTimer();
+};
+initDots(); showPhoto(0); startTimer();
+})();
+
+cript>
 </body>
 </html>
