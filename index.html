@@ -22,7 +22,7 @@ section{padding:clamp(40px,6vh,80px) 4vw}
 .section-title{font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:800;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,var(--accent),#4a6fa5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .section-desc{text-align:center;color:#888;margin-bottom:clamp(20px,3vh,40px);font-size:clamp(0.85rem,1.3vw,1rem)}
 /* Hero */
-#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg,rgba(26,35,50,0.85),rgba(44,62,122,0.85)),url(https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/6333.webp) center/cover no-repeat;position:relative;overflow:hidden;padding-top:80px}
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg,#1a2332 0%,#2c3e7a 50%,#4a6fa5 100%);position:relative;overflow:hidden;padding-top:80px}
 #hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(201,168,76,0.08) 0%,transparent 60%),radial-gradient(circle at 70% 60%,rgba(255,255,255,0.05) 0%,transparent 50%);animation:heroGlow 8s ease-in-out infinite alternate}
 @keyframes heroGlow{0%{transform:translate(0,0)}100%{transform:translate(2%,-2%)}}
 #hero h1{font-size:clamp(2rem,6vw,4.5rem);font-weight:900;color:#fff;position:relative;z-index:1;letter-spacing:3px;animation:fadeUp 1s ease}
@@ -112,7 +112,7 @@ initDots();showPhoto(0);startTimer();
 <section id="video" style="max-width:800px;margin:0 auto;padding-top:clamp(60px,8vh,100px)">
   <h2 class="section-title">🎬 毕业纪念视频</h2>
   <p class="section-desc">重温那些一起走过的日子</p>
-  <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12)">
+  <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.15);margin-top:20px">
     <iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=BV1pxTG6bEBm&p=1&autoplay=0" style="width:100%;height:100%;border:none" allowfullscreen></iframe>
   </div>
 </section>
