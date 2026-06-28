@@ -119,6 +119,7 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 @media(min-width:1921px){:root{font-size:22px}}
 @media(max-width:640px){nav ul{gap:14px}nav a{font-size:0.85rem}section{padding:40px 16px}.message-area{padding:20px 16px}}
+.bilibili-video-wrapper{width:100%;max-width:800px;margin:0 auto;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.15);animation:fadeUp 0.6s ease}.bilibili-video-wrapper iframe{width:100%;aspect-ratio:16/9;display:block;border:none}
 </style>
 </head>
 <body>
@@ -203,15 +204,11 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 
 <div class="video-actions" style="margin-top:clamp(16px,2.5vh,30px);display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center">
   <div style="display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center;align-items:center">
-  <a href="#" id="setBilibiliBtn" class="btn-download" style="background:var(--accent);color:var(--primary);text-decoration:none;font-weight:600;padding:clamp(10px,1.2vh,18px) clamp(22px,2.5vw,40px);border-radius:50px;display:inline-flex;align-items:center;gap:8px;cursor:pointer">🎬 视频审核中 - 点击输入BV号</a>
+  <a href="#video" class="nav-link" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'});setTimeout(function(){var el=document.getElementById('bilibiliVideo');if(el)el.scrollIntoView({behavior:'smooth'})},500)">🎬 毕业纪念视频（已设置）</a>
 </div>
 </div>
 
-<p class="video-tip" style="margin-top:clamp(12px,1.5vh,20px);color:rgba(255,255,255,0.6);font-size:clamp(0.85rem,1.3vw,1.1rem)">
-  ⏳ 视频已上传B站，正在审核中...
-<br>审核通过后，点击上方按钮输入 <strong style="color:#f0c040">BV号</strong> 即可播放
-<br>（BV号在B站视频页面网址中可以找到，如 <strong style="color:#f0c040">BV1GJ411x7FH</strong>）
-</p>
+
 </section>
 
 <!-- ===== 留言墙 ===== -->
@@ -595,7 +592,7 @@ document.getElementById('setBilibiliBtn').addEventListener('click', function(e){
       bv = 'BV' + bv.toUpperCase();
     }
     var iframe = document.getElementById('bilibiliPlayer');
-    iframe.src = 'https://player.bilibili.com/player.html?bvid=' + bv + '&autoplay=0&p=1';
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1pxTG6bEBm&autoplay=0&p=1';
     document.getElementById('videoPending').style.display = 'none';
     showToast('✅ B站视频已加载！🎉');
     // 保存到本地，下次自动加载
@@ -608,7 +605,7 @@ document.getElementById('setBilibiliBtn').addEventListener('click', function(e){
   var savedBv = localStorage.getItem('bilibili_bv');
   if (savedBv) {
     var iframe = document.getElementById('bilibiliPlayer');
-    iframe.src = 'https://player.bilibili.com/player.html?bvid=' + savedBv + '&autoplay=0&p=1';
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1pxTG6bEBm&autoplay=0&p=1';
     document.getElementById('videoPending').style.display = 'none';
   }
 })();
