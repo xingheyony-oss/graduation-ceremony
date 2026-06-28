@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 均州中学 · 九年级1班 · 毕业典礼</title>
+<style>
+.music-btn{position:fixed;bottom:3vh;right:3vw;z-index:999;width:clamp(48px,5vw,70px);height:clamp(48px,5vw,70px);border-radius:50%;background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;border:none;font-size:clamp(1.2rem,2.5vw,1.8rem);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.25);transition:all 0.3s;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.music-btn:hover{transform:scale(1.1)}
+.music-btn.playing{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 4px 20px rgba(0,0,0,0.25)}50%{box-shadow:0 4px 30px rgba(240,192,64,0.5)}100%{box-shadow:0 4px 20px rgba(0,0,0,0.25)}}
+.music-label{position:fixed;bottom:calc(3vh + 5vw + 12px);right:3vw;z-index:998;background:rgba(44,62,122,0.9);color:#fff;padding:8px 16px;border-radius:20px;font-size:clamp(0.75rem,1.2vw,0.95rem);white-space:nowrap;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none}
+.music-label.show{opacity:1;transform:translateY(0)}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2c3e7a;--accent:#f0c040;--light-bg:#faf7f2;--card-bg:rgba(255,255,255,0.85);--shadow:0 8px 32px rgba(0,0,0,0.10);--radius:clamp(16px,2vw,24px);--font-main:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
+html{scroll-behavior:smooth;font-size:clamp(16px,1.8vw,21px)}
+body{font-family:var(--font-main);background:var(--light-bg);color:#222;line-height:1.7;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(44,62,122,0.25);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(44,62,122,0.4)}
+nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 2px 20px rgba(0,0,0,0.06);padding:0 clamp(20px,4vw,60px);height:clamp(56px,6vh,80px);display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:700;font-size:clamp(1.1rem,2.2vw,1.8rem);color:var(--primary);letter-spacing:2px}
+.logo span{color:var(--accent)}
+nav ul{display:flex;list-style:none;gap:clamp(16px,3vw,50px)}
+nav a{text-decoration:none;color:#444;font-weight:500;font-size:clamp(0.85rem,1.6vw,1.3rem);transition:color 0.3s;position:relative}
+nav a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:3px;background:var(--accent);transition:width 0.3s}
+nav a:hover{color:var(--primary)}
+nav a:hover::after{width:100%}
+.hero{min-height:100vh;background:url('654.png') center center / cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15vh 4vw 10vh;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,42,108,0.55),rgba(44,62,122,0.35));z-index:1}
+.confetti-container{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+.confetti{position:absolute;width:clamp(8px,1.2vw,18px);height:clamp(8px,1.2vw,18px);opacity:0.7;animation:fall linear infinite;border-radius:3px}
+@keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:0.8}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.hero-content{position:relative;z-index:3;max-width:90vw}
+.hero .school{font-size:clamp(1.4rem,4vw,3rem);color:#f0c040;font-weight:600;letter-spacing:6px;margin-bottom:8px;opacity:0.95;animation:fadeUp 1s ease 0.1s both;text-shadow:0 3px 15px rgba(0,0,0,0.35)}
+.hero .class-info{font-size:clamp(1.1rem,2.8vw,2rem);color:rgba(255,255,255,0.85);font-weight:400;margin-bottom:12px;animation:fadeUp 1s ease 0.2s both;text-shadow:0 2px 10px rgba(0,0,0,0.25)}
+.hero h1{font-size:clamp(3rem,9vw,6.5rem);color:#fff;text-shadow:0 4px 40px rgba(0,0,0,0.5),0 0 60px rgba(240,192,64,0.2);letter-spacing:6px;margin-bottom:16px;animation:fadeUp 1s ease}
+.hero p{font-size:clamp(1.3rem,3.5vw,2.5rem);color:rgba(255,255,255,0.92);max-width:80vw;margin-top:10px;animation:fadeUp 1s ease 0.3s both;text-shadow:0 2px 15px rgba(0,0,0,0.3);line-height:1.6}
+.hero .sub{font-size:clamp(1.2rem,2.5vw,2rem);color:var(--accent);margin-top:24px;font-weight:500;animation:fadeUp 1s ease 0.5s both;text-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.btn-scroll{margin-top:clamp(30px,5vh,60px);background:linear-gradient(135deg,#f0c040,#f5d76e);color:var(--primary);border:none;padding:clamp(12px,1.5vh,20px) clamp(32px,5vw,64px);border-radius:clamp(30px,5vw,60px);font-size:clamp(1rem,2.2vw,1.8rem);font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 30px rgba(240,192,64,0.4);animation:fadeUp 1s ease 0.7s both;position:relative;overflow:hidden;touch-action:manipulation}
+.btn-scroll:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 8px 40px rgba(240,192,64,0.55)}
+.btn-scroll:active{transform:scale(0.97)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+/* ---- 照片墙区域 ---- */
+.gallery-section{background:linear-gradient(135deg,#faf7f2,#f0ebe3);padding:clamp(50px,8vh,120px) 4vw;text-align:center;position:relative;overflow:hidden}
+.gallery-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232c3e7a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.gallery-section .section-title{color:var(--primary)}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(180px,20vw,320px),1fr));gap:clamp(12px,1.5vw,24px);max-width:clamp(500px,75vw,1400px);margin:0 auto;position:relative;z-index:1}
+.gallery-item{position:relative;border-radius:clamp(12px,1.5vw,20px);overflow:hidden;aspect-ratio:4/3;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.1);transition:all 0.5s ease;transform-origin:center}
+.gallery-item:hover{transform:scale(1.04);box-shadow:0 8px 35px rgba(0,0,0,0.2);z-index:5}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.8s ease}
+.gallery-item:hover img{transform:scale(1.1)}
+.gallery-item .overlay{position:absolute;bottom:0;left:0;right:0;padding:clamp(8px,1.2vh,18px);background:linear-gradient(transparent,rgba(0,0,0,0.65));color:#fff;font-size:clamp(0.75rem,1.1vw,0.95rem);text-align:left;opacity:0;transform:translateY(10px);transition:all 0.4s ease}
+.gallery-item:hover .overlay{opacity:1;transform:translateY(0)}
+.gallery-item .overlay span{display:block;font-weight:500;text-shadow:0 1px 6px rgba(0,0,0,0.4)}
+/* ---- 大图预览弹窗 ---- */
+.gallery-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease;padding:4vw}
+.gallery-modal.active{opacity:1;pointer-events:auto}
+.gallery-modal img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:clamp(8px,1vw,16px);box-shadow:0 20px 80px rgba(0,0,0,0.6);transform:scale(0.9);transition:transform 0.4s ease}
+.gallery-modal.active img{transform:scale(1)}
+.gallery-modal .close-btn{position:absolute;top:clamp(12px,3vh,30px);right:clamp(12px,3vw,30px);background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:clamp(1.5rem,3vw,2.5rem);cursor:pointer;width:clamp(40px,4vw,60px);height:clamp(40px,4vw,60px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:blur(4px)}
+.gallery-modal .close-btn:hover{background:rgba(255,255,255,0.25);transform:rotate(90deg)}
+.gallery-modal .nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:clamp(1.5rem,3vw,2.5rem);cursor:pointer;padding:clamp(12px,1.5vw,24px);border-radius:12px;transition:all 0.3s;backdrop-filter:blur(4px)}
+.gallery-modal .nav-btn:hover{background:rgba(255,255,255,0.2);transform:translateY(-50%) scale(1.1)}
+.gallery-modal .nav-prev{left:clamp(8px,2vw,24px)}
+.gallery-modal .nav-next{right:clamp(8px,2vw,24px)}
+.gallery-modal .counter{position:absolute;bottom:clamp(16px,3vh,30px);left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.7);font-size:clamp(0.85rem,1.3vw,1.1rem);background:rgba(0,0,0,0.4);padding:6px 18px;border-radius:20px}
+/* ---- 自动轮播状态指示 ---- */
+.gallery-section .carousel-indicator{display:flex;gap:10px;justify-content:center;margin-top:clamp(20px,3vh,40px);position:relative;z-index:1}
+.gallery-section .carousel-dot{width:clamp(10px,1vw,16px);height:clamp(10px,1vw,16px);border-radius:50%;background:rgba(44,62,122,0.2);border:2px solid transparent;transition:all 0.4s;cursor:pointer}
+.gallery-section .carousel-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(240,192,64,0.5);transform:scale(1.2)}
+.video-section{background:linear-gradient(135deg,#1a2a6c,#2c3e7a);padding:clamp(50px,8vh,120px) 4vw;text-align:center;position:relative;overflow:hidden}
+.video-section::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(240,192,64,0.05),transparent 60%);pointer-events:none}
+.video-section .section-title{color:#fff;position:relative;font-size:clamp(1.8rem,3.5vw,3rem)}
+.video-section .section-title::after{font-size:clamp(1rem,1.5vw,1.8rem)}
+.video-section .section-desc{color:rgba(255,255,255,0.7);position:relative;font-size:clamp(0.95rem,1.8vw,1.4rem);max-width:50vw;margin-bottom:clamp(20px,4vh,50px)}
+.video-wrapper{max-width:clamp(500px,65vw,1100px);margin:0 auto;border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 60px rgba(0,0,0,0.5);position:relative}
+.video-wrapper video{width:100%;display:block;border-radius:var(--radius)}
+.video-tip{margin-top:clamp(12px,2vh,24px);color:rgba(255,255,255,0.6);font-size:clamp(0.85rem,1.3vw,1.1rem)}
+.video-tip a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border 0.3s}
+.video-tip a:hover{border-bottom-color:var(--accent)}
+.video-actions{display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center;margin-top:clamp(16px,2.5vh,30px)}
+.video-actions a{text-decoration:none;font-weight:600;font-size:clamp(0.85rem,1.3vw,1.1rem);padding:clamp(10px,1.2vh,18px) clamp(22px,2.5vw,40px);border-radius:50px;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;touch-action:manipulation}
+.video-actions .btn-download{background:var(--accent);color:var(--primary);box-shadow:0 4px 15px rgba(240,192,64,0.3)}
+.video-actions .btn-download:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(240,192,64,0.4)}
+.video-actions .btn-player{background:rgba(255,255,255,0.15);color:#fff;border:2px solid rgba(255,255,255,0.3);backdrop-filter:blur(8px)}
+.video-actions .btn-player:hover{background:rgba(255,255,255,0.25);transform:translateY(-2px)}
+.video-actions .btn-explorer{background:#fff;color:var(--primary);border:2px solid rgba(255,255,255,0.5)}
+.video-actions .btn-explorer:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+section{padding:clamp(50px,8vh,120px) 4vw;max-width:clamp(800px,70vw,1200px);margin:0 auto}
+.section-title{text-align:center;font-size:clamp(1.8rem,3.5vw,3rem);color:var(--primary);margin-bottom:clamp(16px,2.5vh,30px);position:relative}
+.section-title::after{content:'✦';display:block;color:var(--accent);font-size:clamp(1rem,1.5vw,1.8rem);margin-top:8px}
+.section-desc{text-align:center;color:#888;max-width:clamp(400px,45vw,700px);margin:0 auto clamp(24px,4vh,50px);font-size:clamp(0.95rem,1.6vw,1.3rem)}
+.message-area{background:#fff;border-radius:var(--radius);padding:clamp(20px,3.5vw,50px);box-shadow:0 8px 50px rgba(0,0,0,0.06);position:relative;overflow:hidden}
+.message-area::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--primary),var(--accent),var(--primary))}
+.message-area input,.message-area textarea{width:100%;border:2px solid #eee;border-radius:clamp(10px,1.5vw,16px);padding:clamp(12px,1.5vh,20px) clamp(14px,2vw,24px);font-size:clamp(0.95rem,1.6vw,1.3rem);font-family:inherit;transition:all 0.3s;background:#fafafa}
+.message-area input:focus,.message-area textarea:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 5px rgba(240,192,64,0.1)}
+.message-area textarea{resize:vertical;min-height:clamp(80px,12vh,150px)}
+.message-area button{margin-top:clamp(12px,2vh,24px);background:linear-gradient(135deg,var(--primary),#1a2a6c);color:#fff;border:none;padding:clamp(10px,1.2vh,18px) clamp(28px,4vw,56px);border-radius:clamp(30px,5vw,60px);font-size:clamp(0.95rem,1.6vw,1.3rem);font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(44,62,122,0.3);touch-action:manipulation}
+.message-area button:hover{transform:translateY(-3px);box-shadow:0 6px 30px rgba(44,62,122,0.4)}
+.message-area button:active{transform:scale(0.97)}
+.message-list{margin-top:clamp(20px,3vh,40px);display:flex;flex-direction:column;gap:clamp(10px,1.5vh,18px)}
+.message-item{background:var(--light-bg);padding:clamp(14px,2vh,24px) clamp(18px,2.5vw,32px);border-radius:clamp(12px,1.5vw,18px);border-left:clamp(4px,0.6vw,8px) solid var(--accent);color:#333;font-size:clamp(0.9rem,1.5vw,1.2rem);position:relative;padding-right:clamp(44px,6vw,70px);transition:all 0.3s;animation:msgIn 0.3s ease}
+.message-item:hover{transform:translateX(6px);box-shadow:0 4px 16px rgba(0,0,0,0.05)}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.message-item .time{font-size:clamp(0.75rem,1.2vw,1rem);color:#aaa;margin-top:8px}
+.message-item .del-btn{position:absolute;top:clamp(6px,1vh,12px);right:clamp(8px,1.2vw,16px);background:none;border:none;color:#ddd;font-size:clamp(1rem,1.8vw,1.5rem);cursor:pointer;transition:all 0.2s;padding:clamp(4px,0.6vh,10px) clamp(6px,0.8vw,14px);border-radius:8px;line-height:1}
+.message-item .del-btn:hover{color:#ff6b81;background:rgba(255,107,129,0.1);transform:scale(1.15)}
+footer{background:linear-gradient(135deg,#1a2a6c,#2c3e7a);color:rgba(255,255,255,0.7);text-align:center;padding:clamp(24px,4vh,50px) 20px;margin-top:40px;position:relative}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+footer p{font-size:clamp(0.85rem,1.3vw,1.1rem);line-height:1.8}
+footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infinite}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@media(min-width:1921px){:root{font-size:22px}}
+@media(max-width:640px){nav ul{gap:14px}nav a{font-size:0.85rem}section{padding:40px 16px}.message-area{padding:20px 16px}}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="logo">🎓 毕<span>业</span>季</div>
+<ul>
+<li><a href="#gallery">📸 照片</a></li>
+<li><a href="#video">🎬 视频</a></li>
+<li><a href="#message">💬 留言</a></li>
+</ul>
+</nav>
+
+<!-- ===== Hero 主视觉 ===== -->
+<section class="hero" id="home">
+<div class="confetti-container" id="confettiBox"></div>
+<div class="hero-content">
+<div class="school">🏫 均州中学</div>
+<div class="class-info">🎒 九年级1班</div>
+<h1>🎉 我们毕业啦！</h1>
+<p>书上说天下没有不散的筵席，<br>但书上也说人生何处不相逢。</p>
+<div class="sub">✨ 愿此去繁花似锦，再相逢依旧如故 ✨</div>
+<button class="btn-scroll" onclick="document.getElementById('message').scrollIntoView({behavior:'smooth'})">🎓 开启纪念之旅</button>
+</div>
+</section>
+
+<!-- ===== 照片墙（自动轮播） ===== -->
+<section class="gallery-section" id="gallery">
+<h2 class="section-title">📸 青春纪念册</h2>
+<p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
+<div class="gallery-grid" id="galleryGrid"></div>
+<div class="carousel-indicator" id="carouselIndicator"></div>
+</section>
+
+<!-- ===== 大图预览弹窗 ===== -->
+<div class="gallery-modal" id="galleryModal">
+<button class="close-btn" id="modalClose">✕</button>
+<button class="nav-btn nav-prev" id="modalPrev">‹</button>
+<img id="modalImage" src="" alt="预览大图">
+<button class="nav-btn nav-next" id="modalNext">›</button>
+<div class="counter" id="modalCounter"></div>
+</div>
+
+<!-- ===== 视频区域（Windows 优化） ===== -->
+<section class="video-section" id="video">
+<h2 class="section-title">🎬 毕业纪念视频</h2>
+<p class="section-desc">重温那些一起走过的日子</p>
+
+<div class="video-wrapper">
+<video id="gradVideo" controls preload="metadata" playsinline poster="654.png">
+<source src="graduation_video.mp4" type="video/mp4">
+您的浏览器不支持视频播放
+</video>
+</div>
+
+<!-- 视频提示（根据系统动态显示） -->
+<p class="video-tip" id="videoTip" style="display:none">
+💡 Windows 浏览器打开本地大视频时可能受限，请使用下方按钮播放
+</p>
+
+<!-- Windows 专属操作按钮 -->
+<div class="video-actions">
+<a href="graduation_video.mp4" download class="btn-download">📥 下载到电脑播放</a>
+<a href="#" id="btnOpenPlayer" class="btn-player">▶ 用系统播放器打开</a>
+<a href="#" id="btnOpenFolder" class="btn-explorer">📂 打开文件所在位置</a>
+</div>
+
+<p class="video-tip" style="margin-top:clamp(12px,1.5vh,20px);color:rgba(255,255,255,0.5);font-size:clamp(0.75rem,1vw,0.9rem)">
+💡 小贴士：你也可以在文件夹里直接双击 <strong>graduation_video.mp4</strong> 播放
+</p>
+</section>
+
+<!-- ===== 留言墙 ===== -->
+<section id="message">
+<h2 class="section-title">💬 毕业留言墙</h2>
+<p class="section-desc">写下你想说的话，送给老师、同学，或未来的自己。</p>
+<div class="message-area">
+<input id="msgAuthor" type="text" placeholder="你的名字…" style="width:100%;border:2px solid #e0ddd8;border-radius:12px;padding:12px 16px;font-size:1rem;font-family:inherit;margin-bottom:12px;transition:border 0.3s;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#e0ddd8'">
+<textarea id="msgInput" placeholder="写一句毕业祝福吧…  (数据保存在本地)"></textarea>
+<button onclick="postMessage()">📨 发布留言</button>
+<div class="message-list" id="msgList"></div>
+</div>
+</section>
+
+<!-- ===== 背景音乐 ===== -->
+<audio id="bgMusic" src="background_music.mp3" loop preload="metadata"></audio>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+<div class="music-label" id="musicLabel">🎵 起风了 — 周深</div>
+
+<!-- ===== 页脚 ===== -->
+<footer>
+<p>🎓 毕业快乐 · 致我们滚烫的青春</p>
+<p style="margin-top:8px">Made with <span class="heart">❤</span> — 愿少年乘风破浪，前程万里</p>
+</footer>
+
+<script>
+// ===== 彩屑生成 =====
+(function(){
+var c=document.getElementById('confettiBox'),
+colors=['#f0c040','#ff6b81','#79d2e6','#a8e6cf','#d4a5f5','#ffb347','#f7dc6f'];
+for(var i=0;i<60;i++){
+var e=document.createElement('div');
+e.className='confetti';
+e.style.left=Math.random()*100+'%';
+e.style.background=colors[Math.floor(Math.random()*colors.length)];
+e.style.width=(6+Math.random()*12)+'px';
+e.style.height=(6+Math.random()*12)+'px';
+e.style.borderRadius=Math.random()>0.5?'50%':'2px';
+e.style.animationDuration=(6+Math.random()*8)+'s';
+e.style.animationDelay=(Math.random()*8)+'s';
+c.appendChild(e)}
+})();
+
+// ===== 照片墙配置 =====
+var galleryConfig = {
+  // ★★★ 请将你的毕业照片放入 photos 文件夹 ★★★
+  // 支持 jpg/jpeg/png/webp 格式
+  // 然后在这里添加文件名和描述（可选）
+  images: [
+    { file: 'photo01.jpg' },
+    { file: 'photo02.jpg' },
+    { file: 'photo03.jpg' },
+    { file: 'photo04.jpg' },
+    { file: 'photo05.jpg' },
+    { file: 'photo06.jpg' },
+    { file: 'photo07.jpg' },
+    { file: 'photo08.jpg' },
+    { file: 'photo09.jpg' },
+    { file: 'photo10.jpg' },
+    { file: 'photo11.jpg' },
+    { file: 'photo12.jpg' },
+    { file: 'photo13.jpg' },
+    { file: 'photo14.jpg' },
+    { file: 'photo15.jpg' }
+  ],
+  basePath: 'photos/',   // 照片存放文件夹
+  interval: 3000,         // 自动轮播间隔（毫秒）
+  shuffleOnLoad: true     // 加载时是否随机打乱顺序
+};
+
+// ===== 照片墙初始化 =====
+(function(){
+var images = galleryConfig.images;
+var grid = document.getElementById('galleryGrid');
+var indicator = document.getElementById('carouselIndicator');
+var modal = document.getElementById('galleryModal');
+var modalImg = document.getElementById('modalImage');
+var modalClose = document.getElementById('modalClose');
+var modalPrev = document.getElementById('modalPrev');
+var modalNext = document.getElementById('modalNext');
+var modalCounter = document.getElementById('modalCounter');
+var basePath = galleryConfig.basePath;
+var currentIndex = 0;
+var timer = null;
+
+// 加载时随机打乱
+if (galleryConfig.shuffleOnLoad) {
+  for (var i = images.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = images[i];
+    images[i] = images[j];
+    images[j] = temp;
+  }
+}
+
+// 生成缩略图网格
+images.forEach(function(img, idx){
+  var item = document.createElement('div');
+  item.className = 'gallery-item';
+  var imgEl = document.createElement('img');
+  imgEl.src = basePath + img.file;
+  imgEl.alt = img.name || '毕业照片';
+  imgEl.loading = 'lazy';
+  item.appendChild(imgEl);
+  if (img.name) {
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.innerHTML = '<span>' + img.name + '</span>';
+    item.appendChild(overlay);
+  }
+  item.addEventListener('click', function(){ openModal(idx); });
+  grid.appendChild(item);
+});
+
+// 生成指示点
+images.forEach(function(_, idx){
+  var dot = document.createElement('div');
+  dot.className = 'carousel-dot';
+  if (idx === 0) dot.classList.add('active');
+  dot.addEventListener('click', function(){
+    stopTimer();
+    // 滚动到对应照片位置（模拟点击）
+    var items = grid.querySelectorAll('.gallery-item');
+    if (items[idx]) {
+      items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      items[idx].style.transform = 'scale(1.04)';
+      setTimeout(function(){ items[idx].style.transform = ''; }, 800);
+    }
+    openModal(idx);
+  });
+  indicator.appendChild(dot);
+});
+
+// 打开大图弹窗
+function openModal(idx){
+  currentIndex = idx;
+  modalImg.src = basePath + images[idx].file;
+  modalImg.alt = images[idx].name || '毕业照片';
+  modalCounter.textContent = (idx + 1) + ' / ' + images.length;
+  modal.classList.add('active');
+  stopTimer();
+  // 更新指示点
+  updateDots(idx);
+  document.body.style.overflow = 'hidden';
+}
+
+// 关闭弹窗
+function closeModal(){
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  startTimer();
+}
+
+// 切换上一张/下一张
+function prevImage(){
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  modalImg.src = basePath + images[currentIndex].file;
+  modalImg.alt = images[currentIndex].name || '毕业照片';
+  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
+  updateDots(currentIndex);
+}
+
+function nextImage(){
+  currentIndex = (currentIndex + 1) % images.length;
+  modalImg.src = basePath + images[currentIndex].file;
+  modalImg.alt = images[currentIndex].name || '毕业照片';
+  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
+  updateDots(currentIndex);
+}
+
+// 更新指示点
+function updateDots(idx){
+  var dots = indicator.querySelectorAll('.carousel-dot');
+  dots.forEach(function(d, i){
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+// 自动轮播（每 interval 毫秒切换一张）
+function startTimer(){
+  stopTimer();
+  if (images.length > 1) {
+    timer = setInterval(function(){
+      // 高亮下一张
+      var items = grid.querySelectorAll('.gallery-item');
+      var nextIdx = (currentIndex + 1) % images.length;
+      // 应用闪烁效果
+      items.forEach(function(item, i){
+        if (i === nextIdx) {
+          item.style.boxShadow = '0 0 30px rgba(240,192,64,0.4), 0 4px 20px rgba(0,0,0,0.1)';
+          item.style.transform = 'scale(1.02)';
+          setTimeout(function(){
+            item.style.boxShadow = '';
+            item.style.transform = '';
+          }, 600);
+        }
+      });
+      currentIndex = nextIdx;
+      updateDots(currentIndex);
+    }, galleryConfig.interval);
+  }
+}
+
+function stopTimer(){
+  if (timer) { clearInterval(timer); timer = null; }
+}
+
+// 事件绑定
+modalClose.addEventListener('click', closeModal);
+modalPrev.addEventListener('click', prevImage);
+modalNext.addEventListener('click', nextImage);
+
+// 键盘控制
+document.addEventListener('keydown', function(e){
+  if (!modal.classList.contains('active')) return;
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowLeft') prevImage();
+  if (e.key === 'ArrowRight') nextImage();
+});
+
+// 点击模态背景关闭
+modal.addEventListener('click', function(e){
+  if (e.target === modal) closeModal();
+});
+
+// 触摸滑动手势支持（大屏触摸）
+var touchStartX = 0;
+modal.addEventListener('touchstart', function(e){
+  touchStartX = e.changedTouches[0].screenX;
+});
+modal.addEventListener('touchend', function(e){
+  var diff = e.changedTouches[0].screenX - touchStartX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) prevImage();
+    else nextImage();
+  }
+});
+
+// 开始自动轮播
+startTimer();
+
+console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，每 ' + (galleryConfig.interval/1000) + ' 秒自动轮播');
+})();
+
+// ===== Windows 检测 =====
+var isWindows = navigator.platform.indexOf('Win') > -1 ||
+navigator.userAgent.indexOf('Windows') > -1;
+
+// ===== 视频处理 =====
+var video = document.getElementById('gradVideo');
+var tip = document.getElementById('videoTip');
+
+// 检测视频是否加载成功
+video.addEventListener('error', function() { tip.style.display = 'block'; });
+video.addEventListener('canplay', function() { tip.style.display = 'none'; });
+setTimeout(function() {
+if (video.readyState < 2) tip.style.display = 'block';
+}, 2000);
+
+// ===== 用系统播放器打开 =====
+document.getElementById('btnOpenPlayer').addEventListener('click', function(e) {
+e.preventDefault();
+// 构建绝对路径
+var base = window.location.href;
+var dir = base.substring(0, base.lastIndexOf('/') + 1);
+var videoPath = dir + 'graduation_video.mp4';
+window.location.href = videoPath;
+});
+
+// ===== 打开文件所在位置（Windows 专属） =====
+document.getElementById('btnOpenFolder').addEventListener('click', function(e) {
+e.preventDefault();
+var base = window.location.href;
+var dir = base.substring(0, base.lastIndexOf('/') + 1);
+// 去掉 file:// 前缀得到实际路径
+if (base.startsWith('file:///')) {
+var realPath = decodeURIComponent(base.substring(8));
+var folderPath = realPath.substring(0, realPath.lastIndexOf('/'));
+// Windows 使用 Explorer 打开
+if (isWindows) {
+window.location.href = 'file:///' + folderPath;
+} else {
+// 其他系统尝试打开所在目录
+window.location.href = dir;
+}
+} else {
+alert('请手动在文件管理器中找到毕业典礼文件夹');
+}
+});
+
+// ===== 背景音乐 =====
+var audio=document.getElementById('bgMusic'),btn=document.getElementById('musicBtn'),label=document.getElementById('musicLabel'),isPlaying=false;
+function toggleMusic(){
+if(isPlaying){
+audio.pause();
+btn.classList.remove('playing');
+btn.innerHTML='🎵';
+label.classList.remove('show');
+} else {
+audio.play().then(function(){
+btn.classList.add('playing');
+btn.innerHTML='🔊';
+label.classList.add('show');
+setTimeout(function(){label.classList.remove('show')},3000);
+}).catch(function(){
+alert('⚠️ 无法自动播放，请点击播放按钮');
+});
+}
+isPlaying=!isPlaying;
+}
+audio.addEventListener('ended',function(){
+isPlaying=false;
+btn.classList.remove('playing');
+btn.innerHTML='🎵';
+label.classList.remove('show');
+});
+
+// ===== 留言功能 =====
+function loadMessages(){
+var list=document.getElementById('msgList'),
+messages=JSON.parse(localStorage.getItem('graduation_messages')||'[]');
+list.innerHTML='';
+messages.forEach(function(msg,index){
+var div=document.createElement('div');
+div.className='message-item';
+var author=msg.author?'<strong>'+msg.author+'</strong>：':'';
+div.innerHTML=author+msg.text+'<div class="time">'+msg.time+'</div><button class="del-btn" onclick="deleteMessage('+index+')" title="撤回">✕</button>';
+list.appendChild(div);
+});
+}
+
+function deleteMessage(index){
+if(!confirm('确定要撤回这条留言吗？')) return;
+var messages=JSON.parse(localStorage.getItem('graduation_messages')||'[]');
+messages.splice(index,1);
+localStorage.setItem('graduation_messages',JSON.stringify(messages));
+loadMessages();
+showToast('✅ 已撤回');
+}
+
+function showToast(t){
+var d=document.createElement('div');
+d.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease';
+d.textContent=t;
+document.body.appendChild(d);
+setTimeout(function(){d.style.opacity='0';d.style.transition='opacity 0.5s';setTimeout(function(){d.remove()},500)},2000);
+}
+
+function postMessage(){
+var input=document.getElementById('msgInput'),
+authorInput=document.getElementById('msgAuthor'),
+text=input.value.trim(),
+author=authorInput.value.trim();
+if(!text){alert('✏️ 写点什么再发布吧～');return;}
+var messages=JSON.parse(localStorage.getItem('graduation_messages')||'[]'),
+now=new Date(),
+timeStr=now.toLocaleString('zh-CN',{hour12:false});
+messages.push({text:text,author:author||'匿名',time:timeStr});
+localStorage.setItem('graduation_messages',JSON.stringify(messages));
+input.value='';
+authorInput.value='';
+loadMessages();
+}
+
+loadMessages();
+</script>
+</body>
+</html>
