@@ -200,6 +200,22 @@ function renderMessages(){
     li.style.cssText='padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none';
     var author=m.author?'<strong style="color:var(--accent)">'+esc(m.author)+'</strong>：':'';
     li.innerHTML='<div style="margin-bottom:4px">'+author+esc(m.text)+'</div><div style="font-size:0.75rem;color:#999">'+m.time+'</div>';
+    var delBtn=document.createElement('span');
+    delBtn.textContent='撤回';
+    delBtn.style.cssText='float:right;color:#999;font-size:0.75rem;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all 0.2s';
+    delBtn.onmouseover=function(){this.style.color='#e74c3c';this.style.background='#fde8e8'};
+    delBtn.onmouseout=function(){this.style.color='#999';this.style.background='transparent'};
+    delBtn.onclick=function(){
+      var idx=parseInt(this.dataset.idx);
+      if(confirm('确定撤回这条留言吗？')){
+        MSG_CACHE.splice(idx,1);
+        localStorage.setItem('msg_cache',JSON.stringify(MSG_CACHE));
+        renderMessages();
+        syncToGitHub();
+      }
+    };
+    delBtn.dataset.idx=i;
+    li.querySelector('div:first-child').appendChild(delBtn);
     ul.appendChild(li);
   }
 }
@@ -222,7 +238,8 @@ function postMessage(){
   setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity 0.5s';setTimeout(function(){toast.remove()},500)},2500);
   setTimeout(function(){saveToGitHub(newMsg);},500);
 }
-function saveToGitHub(newMsg){
+function syncToGitHub(){saveToGitHub(null);}
+function saveToGitHub(newMsg){if(newMsg===){newMsg={};}
   fetch('https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json',{headers:{'Authorization':'token '+G_TOKEN,'Accept':'application/vnd.github.v3+json'}}).then(function(r){return r.json();}).then(function(resp){
     var sha=resp.sha;var existing={messages:MSG_CACHE,count:MSG_CACHE.length};
     try{existing=JSON.parse(decodeURIComponent(escape(atob(resp.content))));existing.messages=MSG_CACHE;existing.count=MSG_CACHE.length;}catch(e){}
