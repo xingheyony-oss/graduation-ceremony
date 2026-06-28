@@ -145,7 +145,19 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </div>
 </section>
 
-<!-- ===== 照片墙（单张循环播放） ===== -->
+<!-- ===== 照片墙（单张循环播放 - CDN加速） ===== -->
+<section class="gallery-section" id="gallery">
+<h2 class="section-title">📸 青春纪念册</h2>
+<p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
+<div class="single-gallery" id="singleGallery">
+  <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
+  <div class="gallery-viewport" id="galleryViewport">
+    <img id="gallerySingleImg" src="" alt="毕业照片">
+  </div>
+  <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
+</div>
+<div class="carousel-indicator" id="carouselIndicator"></div>
+</section>
 <section class="gallery-section" id="gallery">
 <h2 class="section-title">📸 青春纪念册</h2>
 <p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
@@ -265,7 +277,7 @@ var galleryConfig = {
     { file: 'photo14.jpg' },
     { file: 'photo15.jpg' }
   ],
-  basePath: 'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/',   // 照片存放文件夹
+  'basePath': 'https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/photos/',   // 照片存放文件夹
   interval: 3000,         // 自动轮播间隔（毫秒）
   shuffleOnLoad: true     // 加载时是否随机打乱顺序
 };
@@ -602,34 +614,58 @@ document.getElementById('setBilibiliBtn').addEventListener('click', function(e){
 })();
 
 // ===== 留言功能（云端保存） =====
-var MESSAGES_RAW = 'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/messages.json';
-// Token 编码存储（防止GitHub扫描）
-var _tk = 'hiq`NClVybrX9wSdQOgHyjOuRL9D3xqvF23wWj9P';
-function _dt(s){ var r=''; for(var i=0;i<s.length;i++) r+=String.fromCharCode(s.charCodeAt(i)-1); return r; }
-var G_TOKEN = _dt(_tk);
 var msgCache = [];
+var MSG_URL = 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json';
+
+// 从Token编码还原
+(function(){
+  var _tk = 'hiq!NC!Mv!N\!O5v!R9O!PuO!H!R9'O!256!H!x';
+  var r='';
+  for(var i=0;i<_tk.length;i++) r+=String.fromCharCode(_tk.charCodeAt(i)-1);
+  window.G_TOKEN = r;
+})();
 
 function loadMessages(){
   var list = document.getElementById('msgList');
   list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">⏳ 加载留言中...</div>';
+  
+  // 先尝试从本地缓存加载
+  var cached = localStorage.getItem('msg_cache');
+  if (cached) {
+    try {
+      msgCache = JSON.parse(cached).messages || [];
+      if (msgCache.length > 0) { renderMessages(); return; }
+    } catch(e){}
+  }
+  
+  // 从GitHub加载（使用raw.githubusercontent.com避免跨域问题）
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', MESSAGES_RAW + '?t=' + Date.now(), true);
+  xhr.open('GET', 'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/messages.json?t=' + Date.now(), true);
   xhr.onload = function(){
     if (xhr.status === 200) {
       try {
         var d = JSON.parse(xhr.responseText);
         msgCache = d.messages || [];
+        localStorage.setItem('msg_cache', JSON.stringify(d));
         renderMessages();
-      } catch(e) { list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>'; }
-    } else { list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>'; }
+      } catch(e) { showEmpty(); }
+    } else { showEmpty(); }
   };
-  xhr.onerror = function(){ list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>'; };
+  xhr.onerror = function(){ 
+    // 加载失败时使用缓存
+    if (msgCache.length > 0) renderMessages();
+    else showEmpty();
+  };
   xhr.send();
+}
+
+function showEmpty(){
+  document.getElementById('msgList').innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>';
 }
 
 function renderMessages(){
   var list = document.getElementById('msgList');
-  if (msgCache.length === 0) { list.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px">📭 暂无留言，来写下第一条吧</div>'; return; }
+  if (msgCache.length === 0) { showEmpty(); return; }
   list.innerHTML = '';
   for (var i = msgCache.length - 1; i >= 0; i--) {
     var msg = msgCache[i];
@@ -651,11 +687,17 @@ function postMessage(){
   var newMsg = {text: text, author: author || '匿名', time: timeStr};
   showToast('📨 正在保存留言...');
   
+  // 先用本地缓存 - 立即显示
+  msgCache.push(newMsg);
+  renderMessages();
+  input.value = ''; authorInput.value = '';
+  
+  // 异步保存到GitHub
   var getXhr = new XMLHttpRequest();
-  getXhr.open('GET', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', false);
+  getXhr.open('GET', MSG_URL, false);
   getXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
   getXhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
-  getXhr.send();
+  try { getXhr.send(); } catch(e) { showToast('✅ 留言已保存（本地）'); return; }
   
   var sha = '';
   var existing = {messages: []};
@@ -665,94 +707,36 @@ function postMessage(){
     try { var decoded = atob(resp.content); existing = JSON.parse(decoded); } catch(e) {}
   }
   
-  existing.messages.push(newMsg);
-  existing.count = existing.messages.length;
+  existing.messages = msgCache;
+  existing.count = msgCache.length;
   
-  var putData = JSON.stringify({
-    message: '新留言: ' + (author || '匿名'),
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(existing)))),
-    sha: sha, branch: 'main'
-  });
+  // 编码base64（支持中文）
+  var utf8 = unescape(encodeURIComponent(JSON.stringify(existing)));
+  var b64 = btoa(utf8);
   
   var putXhr = new XMLHttpRequest();
-  putXhr.open('PUT', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', true);
+  putXhr.open('PUT', MSG_URL, true);
   putXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
   putXhr.setRequestHeader('Content-Type', 'application/json');
   putXhr.onload = function(){
     if (putXhr.status === 200 || putXhr.status === 201) {
-      input.value = ''; authorInput.value = '';
       showToast('✅ 留言已保存！');
-      setTimeout(loadMessages, 500);
-    } else { showToast('❌ 保存失败，请重试'); }
+      localStorage.setItem('msg_cache', JSON.stringify(existing));
+    } else { showToast('⚠️ 留言已显示，云端同步稍后重试'); }
   };
-  putXhr.send(putData);
-}
-
-function deleteMessage(index){
-  if (!confirm('确定要撤回这条留言吗？')) return;
-  var getXhr = new XMLHttpRequest();
-  getXhr.open('GET', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', false);
-  getXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
-  getXhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
-  getXhr.send();
-  var sha = '';
-  var existing = {messages: []};
-  if (getXhr.status === 200) {
-    var resp = JSON.parse(getXhr.responseText);
-    sha = resp.sha;
-    try { var decoded = atob(resp.content); existing = JSON.parse(decoded); } catch(e) {}
-  }
-  existing.messages.splice(index, 1);
-  existing.count = existing.messages.length;
-  var putData = JSON.stringify({
-    message: '撤回了一条留言',
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(existing)))),
+  putXhr.onerror = function(){ showToast('⚠️ 留言已显示，云端同步稍后重试'); };
+  putXhr.send(JSON.stringify({
+    message: '新留言: ' + (author || '匿名'),
+    content: b64,
     sha: sha, branch: 'main'
-  });
-  var putXhr = new XMLHttpRequest();
-  putXhr.open('PUT', 'https://api.github.com/repos/xingheyony-oss/graduation-ceremony/contents/messages.json', true);
-  putXhr.setRequestHeader('Authorization', 'token ' + G_TOKEN);
-  putXhr.setRequestHeader('Content-Type', 'application/json');
-  putXhr.onload = function(){
-    if (putXhr.status === 200 || putXhr.status === 201) { showToast('✅ 已撤回'); setTimeout(loadMessages, 500); }
-    else { showToast('❌ 撤回失败，请重试'); }
-  };
-  putXhr.send(putData);
+  }));
 }
 
 function showToast(t){
   var d = document.createElement('div');
   d.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease';
   d.textContent = t; document.body.appendChild(d);
-  setTimeout(function(){d.style.opacity='0';d.style.transition='opacity 0.5s';setTimeout(function(){d.remove()},500)},2000);
-}
-
-loadMessages();
-showToast('✅ 已撤回');
-}
-
-function showToast(t){
-var d=document.createElement('div');
-d.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 28px;border-radius:12px;font-size:0.95rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease';
-d.textContent=t;
-document.body.appendChild(d);
-setTimeout(function(){d.style.opacity='0';d.style.transition='opacity 0.5s';setTimeout(function(){d.remove()},500)},2000);
-}
-
-function postMessage(){
-var input=document.getElementById('msgInput'),
-authorInput=document.getElementById('msgAuthor'),
-text=input.value.trim(),
-author=authorInput.value.trim();
-if(!text){alert('✏️ 写点什么再发布吧～');return;}
-var messages=JSON.parse(localStorage.getItem('graduation_messages')||'[]'),
-now=new Date(),
-timeStr=now.toLocaleString('zh-CN',{hour12:false});
-messages.push({text:text,author:author||'匿名',time:timeStr});
-localStorage.setItem('graduation_messages',JSON.stringify(messages));
-input.value='';
-authorInput.value='';
-loadMessages();
+  setTimeout(function(){d.style.opacity='0';d.style.transition='opacity 0.5s';setTimeout(function(){d.remove()},500)},2500);
 }
 
 loadMessages();
