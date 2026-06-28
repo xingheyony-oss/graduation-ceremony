@@ -42,18 +42,23 @@ nav a:hover::after{width:100%}
 .btn-scroll:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 8px 40px rgba(240,192,64,0.55)}
 .btn-scroll:active{transform:scale(0.97)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
-/* ---- 照片墙区域 ---- */
+
+/* ---- 单张照片循环播放 ---- */
 .gallery-section{background:linear-gradient(135deg,#faf7f2,#f0ebe3);padding:clamp(50px,8vh,120px) 4vw;text-align:center;position:relative;overflow:hidden}
 .gallery-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232c3e7a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
 .gallery-section .section-title{color:var(--primary)}
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(180px,20vw,320px),1fr));gap:clamp(12px,1.5vw,24px);max-width:clamp(500px,75vw,1400px);margin:0 auto;position:relative;z-index:1}
-.gallery-item{position:relative;border-radius:clamp(12px,1.5vw,20px);overflow:hidden;aspect-ratio:4/3;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.1);transition:all 0.5s ease;transform-origin:center}
-.gallery-item:hover{transform:scale(1.04);box-shadow:0 8px 35px rgba(0,0,0,0.2);z-index:5}
-.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.8s ease}
-.gallery-item:hover img{transform:scale(1.1)}
-.gallery-item .overlay{position:absolute;bottom:0;left:0;right:0;padding:clamp(8px,1.2vh,18px);background:linear-gradient(transparent,rgba(0,0,0,0.65));color:#fff;font-size:clamp(0.75rem,1.1vw,0.95rem);text-align:left;opacity:0;transform:translateY(10px);transition:all 0.4s ease}
-.gallery-item:hover .overlay{opacity:1;transform:translateY(0)}
-.gallery-item .overlay span{display:block;font-weight:500;text-shadow:0 1px 6px rgba(0,0,0,0.4)}
+.single-gallery{display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.5vw,24px);max-width:clamp(400px,50vw,800px);margin:0 auto;position:relative;z-index:1}
+.gallery-viewport{flex:1;border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12);position:relative;aspect-ratio:4/3;background:#f0ebe3}
+.gallery-viewport img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.5s ease, transform 0.5s ease}
+.gallery-viewport img.fade-in{opacity:1;transform:scale(1)}
+.gallery-viewport img.fade-out{opacity:0;transform:scale(0.95)}
+.gallery-arrow{background:rgba(44,62,122,0.85);color:#fff;border:none;font-size:clamp(1.8rem,3vw,3rem);cursor:pointer;width:clamp(40px,4vw,56px);height:clamp(40px,4vw,56px);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;flex-shrink:0;box-shadow:0 4px 15px rgba(0,0,0,0.15)}
+.gallery-arrow:hover{background:var(--primary);transform:scale(1.1)}
+.gallery-arrow:active{transform:scale(0.95)}
+.gallery-section .carousel-indicator{display:flex;gap:10px;justify-content:center;margin-top:clamp(20px,3vh,40px);position:relative;z-index:1}
+.gallery-section .carousel-dot{width:clamp(10px,1vw,16px);height:clamp(10px,1vw,16px);border-radius:50%;background:rgba(44,62,122,0.2);border:2px solid transparent;transition:all 0.4s;cursor:pointer}
+.gallery-section .carousel-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(240,192,64,0.5);transform:scale(1.2)}
+@media(max-width:640px){.single-gallery{gap:6px}.gallery-arrow{width:36px;height:36px;font-size:1.5rem}}
 /* ---- 大图预览弹窗 ---- */
 .gallery-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease;padding:4vw}
 .gallery-modal.active{opacity:1;pointer-events:auto}
@@ -140,15 +145,23 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 </div>
 </section>
 
-<!-- ===== 照片墙（自动轮播） ===== -->
+<!-- ===== 照片墙（单张循环播放） ===== -->
 <section class="gallery-section" id="gallery">
 <h2 class="section-title">📸 青春纪念册</h2>
 <p class="section-desc">那些年我们一起走过的日子 · 每一帧都是回忆</p>
-<div class="gallery-grid" id="galleryGrid"></div>
-<div class="carousel-indicator" id="carouselIndicator"></div>
-</section>
 
-<!-- ===== 大图预览弹窗 ===== -->
+<!-- 单张显示区域 -->
+<div class="single-gallery" id="singleGallery">
+  <button class="gallery-arrow gallery-arrow-left" id="galleryPrev">‹</button>
+  <div class="gallery-viewport" id="galleryViewport">
+    <img id="gallerySingleImg" src="" alt="毕业照片">
+  </div>
+  <button class="gallery-arrow gallery-arrow-right" id="galleryNext">›</button>
+</div>
+
+<!-- 底部指示点 -->
+<div class="carousel-indicator" id="carouselIndicator"></div>
+</section><!-- ===== 大图预览弹窗 ===== -->
 <div class="gallery-modal" id="galleryModal">
 <button class="close-btn" id="modalClose">✕</button>
 <button class="nav-btn nav-prev" id="modalPrev">‹</button>
@@ -254,8 +267,11 @@ var galleryConfig = {
 
 (function(){
 var images = galleryConfig.images;
-var grid = document.getElementById('galleryGrid');
+var viewport = document.getElementById('galleryViewport');
+var imgEl = document.getElementById('gallerySingleImg');
 var indicator = document.getElementById('carouselIndicator');
+var prevBtn = document.getElementById('galleryPrev');
+var nextBtn = document.getElementById('galleryNext');
 var modal = document.getElementById('galleryModal');
 var modalImg = document.getElementById('modalImage');
 var modalClose = document.getElementById('modalClose');
@@ -264,9 +280,9 @@ var modalNext = document.getElementById('modalNext');
 var modalCounter = document.getElementById('modalCounter');
 var basePath = galleryConfig.basePath;
 var currentIndex = 0;
-var timer = null;
+var direction = 1; // 1=向右, -1=向左
 var autoTimer = null;
-var isAutoPlaying = true;
+var isTransitioning = false;
 
 // 加载时随机打乱
 if (galleryConfig.shuffleOnLoad) {
@@ -278,24 +294,44 @@ if (galleryConfig.shuffleOnLoad) {
   }
 }
 
-// 生成缩略图网格
-images.forEach(function(img, idx){
-  var item = document.createElement('div');
-  item.className = 'gallery-item';
-  var imgEl = document.createElement('img');
-  imgEl.src = basePath + img.file;
-  imgEl.alt = img.name || '毕业照片';
-  imgEl.loading = 'lazy';
-  item.appendChild(imgEl);
-  if (img.name) {
-    var overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    overlay.innerHTML = '<span>' + img.name + '</span>';
-    item.appendChild(overlay);
+// 显示指定照片（带淡入淡出效果）
+function showImage(idx, immediate){
+  if (isTransitioning && !immediate) return;
+  if (idx < 0 || idx >= images.length) return;
+  currentIndex = idx;
+  
+  if (immediate) {
+    imgEl.src = basePath + images[idx].file;
+    imgEl.style.opacity = '1';
+    imgEl.style.transform = 'scale(1)';
+  } else {
+    isTransitioning = true;
+    // 淡出
+    imgEl.style.opacity = '0';
+    imgEl.style.transform = 'scale(0.95)';
+    setTimeout(function(){
+      imgEl.src = basePath + images[idx].file;
+      // 淡入
+      setTimeout(function(){
+        imgEl.style.opacity = '1';
+        imgEl.style.transform = 'scale(1)';
+        isTransitioning = false;
+      }, 50);
+    }, 300);
   }
-  item.addEventListener('click', function(){ openModal(idx); });
-  grid.appendChild(item);
-});
+  // 更新指示点
+  updateDots(idx);
+}
+
+// 更新指示点
+function updateDots(idx){
+  var dots = indicator.querySelectorAll('.carousel-dot');
+  if (dots.length) {
+    dots.forEach(function(d, i){
+      d.classList.toggle('active', i === idx);
+    });
+  }
+}
 
 // 生成指示点
 images.forEach(function(_, idx){
@@ -303,135 +339,126 @@ images.forEach(function(_, idx){
   dot.className = 'carousel-dot';
   if (idx === 0) dot.classList.add('active');
   dot.addEventListener('click', function(){
-    isAutoPlaying = false;
-    stopAutoTimer();
-    selectImage(idx);
-    var items = grid.querySelectorAll('.gallery-item');
-    if (items[idx]) {
-      items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    openModal(idx);
+    stopAuto();
+    showImage(idx);
+    startAuto();
   });
   indicator.appendChild(dot);
 });
 
-// 选中某张照片：高亮 + 滚动
-function selectImage(idx){
-  currentIndex = idx;
-  var items = grid.querySelectorAll('.gallery-item');
-  var dots = indicator.querySelectorAll('.carousel-dot');
-  items.forEach(function(item, i){
-    item.style.transform = i === idx ? 'scale(1.04)' : '';
-    item.style.boxShadow = i === idx ? '0 8px 35px rgba(240,192,64,0.35), 0 4px 20px rgba(0,0,0,0.15)' : '';
-    item.style.zIndex = i === idx ? '5' : '';
-  });
-  dots.forEach(function(d, i){
-    d.classList.toggle('active', i === idx);
-  });
-  // 滚动到可视区域
-  if (items[idx]) {
-    items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+// 下一张（向右）
+function nextImage(){
+  if (isTransitioning) return;
+  var next = (currentIndex + 1) % images.length;
+  showImage(next);
+}
+
+// 上一张（向左）
+function prevImage(){
+  if (isTransitioning) return;
+  var prev = (currentIndex - 1 + images.length) % images.length;
+  showImage(prev);
+}
+
+// 左右来回循环播放
+function autoPlay(){
+  var next = currentIndex + direction;
+  if (next >= images.length) {
+    direction = -1;
+    next = images.length - 2;
+  } else if (next < 0) {
+    direction = 1;
+    next = 1;
   }
+  showImage(next);
 }
 
-// 自动播放下一个
-function autoNext(){
-  var nextIdx = (currentIndex + 1) % images.length;
-  selectImage(nextIdx);
-}
-
-// 开始自动轮播
-function startAutoTimer(){
-  stopAutoTimer();
+// 启动/停止自动播放
+function startAuto(){
+  stopAuto();
   if (images.length <= 1) return;
-  isAutoPlaying = true;
-  autoTimer = setInterval(autoNext, galleryConfig.interval);
+  autoTimer = setInterval(autoPlay, galleryConfig.interval);
 }
 
-function stopAutoTimer(){
+function stopAuto(){
   if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
-  isAutoPlaying = false;
 }
 
-function restartAutoTimer(){
-  stopAutoTimer();
-  startAutoTimer();
-}
+// 左右按钮点击
+prevBtn.addEventListener('click', function(){
+  stopAuto();
+  prevImage();
+  startAuto();
+});
+nextBtn.addEventListener('click', function(){
+  stopAuto();
+  nextImage();
+  startAuto();
+});
 
-// 打开大图弹窗
-function openModal(idx){
-  stopAutoTimer();
-  currentIndex = idx;
-  modalImg.src = basePath + images[idx].file;
-  modalImg.alt = images[idx].name || '毕业照片';
-  modalCounter.textContent = (idx + 1) + ' / ' + images.length;
+// 点击照片打开大图预览
+imgEl.addEventListener('click', function(){
+  stopAuto();
+  modalImg.src = basePath + images[currentIndex].file;
+  modalImg.alt = images[currentIndex].name || '毕业照片';
+  modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
-  selectImage(idx);
-}
+});
 
-// 关闭弹窗
-function closeModal(){
+// 大图弹窗控制
+modalClose.addEventListener('click', function(){
   modal.classList.remove('active');
   document.body.style.overflow = '';
-  restartAutoTimer();
-}
-
-// 切换上一张/下一张
-function prevImage(){
+  startAuto();
+});
+modalPrev.addEventListener('click', function(){
   currentIndex = (currentIndex - 1 + images.length) % images.length;
   modalImg.src = basePath + images[currentIndex].file;
   modalImg.alt = images[currentIndex].name || '毕业照片';
   modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  selectImage(currentIndex);
-}
-
-function nextImage(){
+});
+modalNext.addEventListener('click', function(){
   currentIndex = (currentIndex + 1) % images.length;
   modalImg.src = basePath + images[currentIndex].file;
   modalImg.alt = images[currentIndex].name || '毕业照片';
   modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
-  selectImage(currentIndex);
-}
+});
 
-// 事件绑定
-modalClose.addEventListener('click', closeModal);
-modalPrev.addEventListener('click', prevImage);
-modalNext.addEventListener('click', nextImage);
-
-// 键盘控制
 document.addEventListener('keydown', function(e){
   if (!modal.classList.contains('active')) return;
-  if (e.key === 'Escape') closeModal();
-  if (e.key === 'ArrowLeft') prevImage();
-  if (e.key === 'ArrowRight') nextImage();
+  if (e.key === 'Escape') { modal.classList.remove('active'); document.body.style.overflow = ''; startAuto(); }
+  if (e.key === 'ArrowLeft') { currentIndex = (currentIndex - 1 + images.length) % images.length; modalImg.src = basePath + images[currentIndex].file; modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length; }
+  if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % images.length; modalImg.src = basePath + images[currentIndex].file; modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length; }
 });
 
-// 点击模态背景关闭
 modal.addEventListener('click', function(e){
-  if (e.target === modal) closeModal();
+  if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; startAuto(); }
 });
 
-// 触摸滑动手势
+// 触摸滑动
 var touchStartX = 0;
-modal.addEventListener('touchstart', function(e){
-  touchStartX = e.changedTouches[0].screenX;
-});
+modal.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
 modal.addEventListener('touchend', function(e){
   var diff = e.changedTouches[0].screenX - touchStartX;
   if (Math.abs(diff) > 50) {
-    if (diff > 0) prevImage();
-    else nextImage();
+    if (diff > 0) { currentIndex = (currentIndex - 1 + images.length) % images.length; }
+    else { currentIndex = (currentIndex + 1) % images.length; }
+    modalImg.src = basePath + images[currentIndex].file;
+    modalCounter.textContent = (currentIndex + 1) + ' / ' + images.length;
   }
 });
 
-// 开始自动轮播
-startAutoTimer();
-console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，每 ' + (galleryConfig.interval/1000) + ' 秒循环播放');
+// 显示第一张
+showImage(0, true);
+
+// 开始自动左右来回循环
+startAuto();
+console.log('📸 照片墙已加载，共 ' + images.length + ' 张照片，左右来回循环播放');
 })();
 
 
-// ===== Windows 检测 =====
+// ===== Windows 检测 =====// ===== Windows 检测 =====
 var isWindows = navigator.platform.indexOf('Win') > -1 ||
 navigator.userAgent.indexOf('Windows') > -1;
 
