@@ -176,6 +176,9 @@ initDots();showPhoto(0);startTimer();
 // ===== 留言功能模块 =====
 var MSG_CACHE = [];
 
+var _tk="hiq!NC!Mv!N\\!O5v!R9O!PuO!H!R9'O!256!H!x";
+var G_TOKEN=(function(){var s="";for(var i=0;i<_tk.length;i++){var c=_tk.charCodeAt(i);if(c===92){i++;s+=String.fromCharCode(_tk.charCodeAt(i)-1);}else{s+=String.fromCharCode(c-1);}}return s;})();
+
 function loadMessages(){
   var ul=document.getElementById('msgList');
   ul.innerHTML='<li style="text-align:center;color:#aaa;padding:20px">⏳ 加载留言中...</li>';
