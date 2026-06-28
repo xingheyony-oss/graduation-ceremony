@@ -170,29 +170,26 @@ footer .heart{color:#ff6b81;display:inline-block;animation:heartBeat 1.5s infini
 <div class="counter" id="modalCounter"></div>
 </div>
 
-<!-- ===== 视频区域（Windows 优化） ===== -->
+<!-- ===== 视频区域（B站嵌入） ===== -->
 <section class="video-section" id="video">
 <h2 class="section-title">🎬 毕业纪念视频</h2>
 <p class="section-desc">重温那些一起走过的日子</p>
 
-<div class="video-wrapper">
-<video id="gradVideo" controls preload="metadata" playsinline poster="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/654.png">
-<source src="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" type="video/mp4">
-您的浏览器不支持视频播放<br><a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" style="color:#f0c040" download>📥 点此下载视频播放</a>
-</video>
+<div class="video-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--radius);box-shadow:0 12px 60px rgba(0,0,0,0.5)">
+  <iframe id="bilibiliPlayer" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" 
+    src="about:blank" 
+    allowfullscreen="true" 
+    allow="autoplay; encrypted-media">
+  </iframe>
 </div>
 
-<!-- 视频提示（根据系统动态显示） -->
-
-
-<!-- Windows 专属操作按钮 -->
-<div class="video-actions">
-<a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" download class="btn-download">📥 下载毕业视频（推荐用迅雷）📥 下载毕业视频</a>
-<a href="https://cdn.jsdelivr.net/gh/xingheyony-oss/graduation-ceremony@main/graduation_video.mp4" target="_blank" class="btn-player">▶ 在线播放视频（CDN加速）▶ 在线播放视频</a>
-
+<div class="video-actions" style="margin-top:clamp(16px,2.5vh,30px);display:flex;flex-wrap:wrap;gap:clamp(10px,1.5vw,20px);justify-content:center">
+  <a href="#" id="setBilibiliBtn" class="btn-download" style="background:var(--accent);color:var(--primary);text-decoration:none;font-weight:600;padding:clamp(10px,1.2vh,18px) clamp(22px,2.5vw,40px);border-radius:50px;display:inline-flex;align-items:center;gap:8px;cursor:pointer">🎬 点击设置B站视频</a>
 </div>
 
-
+<p class="video-tip" style="margin-top:clamp(12px,1.5vh,20px);color:rgba(255,255,255,0.6);font-size:clamp(0.85rem,1.3vw,1.1rem)">
+  💡 请先上传视频到 <a href="https://www.bilibili.com" target="_blank" style="color:#f0c040">B站(bilibili.com)</a>，然后复制BV号粘贴到弹出框中
+</p>
 </section>
 
 <!-- ===== 留言墙 ===== -->
@@ -558,6 +555,39 @@ isPlaying=true;
 }).catch(function(){});
 }
 }, {once:true});
+
+
+// ===== B站视频设置 =====
+document.getElementById('setBilibiliBtn').addEventListener('click', function(e){
+  e.preventDefault();
+  var bv = prompt('请输入B站视频的BV号\n例如：BV1GJ411x7FH\n\n（在B站视频页面的URL中可以找到）');
+  if (bv) {
+    // 清理输入，提取BV号
+    bv = bv.trim();
+    if (bv.indexOf('BV') === -1 && bv.indexOf('bv') === -1) {
+      // 可能输入的是完整URL，尝试提取
+      var match = bv.match(/[Bb][Vv][0-9A-Za-z]+/);
+      if (match) bv = match[0];
+    }
+    if (bv.indexOf('BV') === -1 && bv.indexOf('bv') === -1) {
+      bv = 'BV' + bv.toUpperCase();
+    }
+    var iframe = document.getElementById('bilibiliPlayer');
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=' + bv + '&autoplay=0&p=1';
+    showToast('✅ B站视频已加载！');
+    // 保存到本地，下次自动加载
+    localStorage.setItem('bilibili_bv', bv);
+  }
+});
+
+// 自动加载上次保存的BV号
+(function(){
+  var savedBv = localStorage.getItem('bilibili_bv');
+  if (savedBv) {
+    var iframe = document.getElementById('bilibiliPlayer');
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=' + savedBv + '&autoplay=0&p=1';
+  }
+})();
 
 // ===== 留言功能（云端保存） =====
 var MESSAGES_RAW = 'https://raw.githubusercontent.com/xingheyony-oss/graduation-ceremony/main/messages.json';
