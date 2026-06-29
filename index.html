@@ -132,12 +132,16 @@ initDots();showPhoto(0);startTimer();
     <ul id="msgList" style="list-style:none;padding:0;margin-top:24px;text-align:left">
       <li style="text-align:center;color:#aaa;padding:20px;list-style:none">📭 暂无留言，来写下第一条吧</li>
     </ul>
+    <div id="pagination" style="display:none;text-align:center;margin-top:20px;flex-wrap:wrap;justify-content:center;gap:6px"></div>
   </div>
 </section>
 
 <script>
 // ===== 留言功能模块 =====
 var MSG_CACHE = [];
+var PAGE_SIZE = 5;
+var currentPage = 1;
+
 
 // Token编码：每个字符ASCII码+1
 var _tk="hiq`NClVybrX9wSdQOgHyjOuRL9D3xqvF23wWj9P";
@@ -156,11 +160,19 @@ function loadMessages(){
   xhr.send();
 }
 function showEmpty(){document.getElementById('msgList').innerHTML='<li style="text-align:center;color:#aaa;padding:20px">📭 暂无留言</li>';}
-function renderMessages(){
+function renderMessages(pg){
   var ul=document.getElementById('msgList');
   if(!ul)return;
+  if(!pg)pg=currentPage;
+  if(pg<1)pg=1;
+  var totalPages=Math.ceil(MSG_CACHE.length/PAGE_SIZE)||1;
+  if(pg>totalPages)pg=totalPages;
+  currentPage=pg;
   ul.innerHTML='';
-  for(var i=MSG_CACHE.length-1;i>=0;i--){
+  
+  var start=(pg-1)*PAGE_SIZE;
+  var end=Math.min(start+PAGE_SIZE,MSG_CACHE.length);
+  for(var i=MSG_CACHE.length-1-start;i>=MSG_CACHE.length-end;i--){
     var m=MSG_CACHE[i];var li=document.createElement('li');
     li.style.cssText='padding:14px 18px;background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);list-style:none;position:relative';
     var author=m.author?'<strong style="color:var(--accent)">'+esc(m.author)+'</strong>：':'';
@@ -184,7 +196,29 @@ function renderMessages(){
     li.appendChild(delBtn);
     ul.appendChild(li);
   }
-  if(MSG_CACHE.length===0)showEmpty();
+  if(MSG_CACHE.length===0){showEmpty();updatePagination();}
+  else updatePagination();
+}
+function updatePagination(){
+  var pgDiv=document.getElementById('pagination');
+  if(!pgDiv)return;
+  var totalPages=Math.ceil(MSG_CACHE.length/PAGE_SIZE)||1;
+  if(totalPages<=1){pgDiv.style.display='none';pgDiv.innerHTML='';return;}
+  pgDiv.style.display='flex';
+  var html='';
+  html+='<button onclick="renderMessages(1)" style="padding:6px 12px;border:1px solid #e0d5c8;background:#fff;border-radius:6px;cursor:pointer;font-size:0.85rem;color:#555">◀◀</button>';
+  html+='<button onclick="renderMessages('+(currentPage-1)+')" style="padding:6px 12px;border:1px solid #e0d5c8;background:#fff;border-radius:6px;cursor:pointer;font-size:0.85rem;color:#555">◀</button>';
+  for(var p=1;p<=totalPages;p++){
+    if(p===currentPage){
+      html+='<button style="padding:6px 14px;border:none;background:linear-gradient(135deg,#2c3e7a,#4a6fa5);color:#fff;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:default">'+p+'</button>';
+    }else{
+      html+='<button onclick="renderMessages('+p+')" style="padding:6px 14px;border:1px solid #e0d5c8;background:#fff;border-radius:6px;cursor:pointer;font-size:0.85rem;color:#555" onmouseover="this.style.background='#f0f4ff';this.style.borderColor='#2c3e7a'" onmouseout="this.style.background='#fff';this.style.borderColor='#e0d5c8'">'+p+'</button>';
+    }
+  }
+  html+='<button onclick="renderMessages('+(currentPage+1)+')" style="padding:6px 12px;border:1px solid #e0d5c8;background:#fff;border-radius:6px;cursor:pointer;font-size:0.85rem;color:#555">▶</button>';
+  html+='<button onclick="renderMessages('+totalPages+')" style="padding:6px 12px;border:1px solid #e0d5c8;background:#fff;border-radius:6px;cursor:pointer;font-size:0.85rem;color:#555">▶▶</button>';
+  html+='<span style="font-size:0.8rem;color:#999;margin-left:8px;align-self:center">共 '+MSG_CACHE.length+' 条 / '+totalPages+' 页</span>';
+  pgDiv.innerHTML=html;
 }
 function esc(t){if(!t)return '';var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function postMessage(){
@@ -198,7 +232,7 @@ function postMessage(){
   var now=new Date();
   var timeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   var newMsg={text:text,author:author||'匿名',time:timeStr};
-  MSG_CACHE.push(newMsg);renderMessages();
+  MSG_CACHE.push(newMsg);renderMessages(1);
   input.value='';if(authorInput)authorInput.value='';
   localStorage.setItem('msg_cache',JSON.stringify(MSG_CACHE));
   var toast=document.createElement('div');
